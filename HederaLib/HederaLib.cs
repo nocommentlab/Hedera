@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
@@ -140,8 +139,9 @@ namespace ncl.hedera.HederaLib
                     Result = (string)OBJECT_FileIoC["type"] switch
                     {
                         "exists" => true,
-                        "hash" => (Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(OBJECT_FileIoC["sha256_hash"].ToLower())),
-                        "imphash"=> (Utils.CalculateImphash(fileItem.STRING_Path).Equals(OBJECT_FileIoC["value"].ToLower())),
+                        "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(OBJECT_FileIoC["sha256_hash"].ToLower()),
+                        "imphash"=> Utils.CalculateImphash(fileItem.STRING_Path)?.Equals(OBJECT_FileIoC["value"].ToLower()),
+                        "yara" => Utils.VerifyYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: OBJECT_FileIoC["rule"]).Count > 0,
                         _ => false
                     },
 

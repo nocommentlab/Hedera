@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using libyaraNET;
+using Microsoft.Win32;
 using ncl.hedera.HederaLib.Models;
 using PeNet;
 using System;
@@ -48,9 +49,33 @@ namespace ncl.hedera.HederaLib.Helpers
 
         public static string CalculateImphash(string STRING_FilePath)
         {
+            string STRING_ImpHash;
 
             PeFile peFile = new(STRING_FilePath);
-            return peFile.ImpHash.ToLower();
+            STRING_ImpHash = peFile.ImpHash ?? String.Empty;
+
+            return STRING_ImpHash;
+        }
+
+        public static List<YaraResult> VerifyYaraRule(string STRING_FilePath, string STRING_YaraRule)
+        {
+            List<YaraResult> yaraResults = null;
+
+            List<ScanResult> results = QuickScan.File(STRING_FilePath, STRING_YaraRule);
+
+            if(results.Any())
+            {
+                yaraResults = new();
+
+                yaraResults.Add(new YaraResult
+                {
+                    RuleIdentifier = results[0].MatchingRule.Identifier,
+
+
+                });
+            }
+
+            return yaraResults;
         }
         /// <summary>
         /// Retrieves the 

@@ -115,7 +115,11 @@ namespace Hedera
                                                     fileIoC["type"],
                                                     fileIoC["value"]));
                             break;
-
+                        case "yara":
+                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
+                                                    fileResult.FileItem.STRING_Path,
+                                                    fileIoC["type"]));
+                            break;
                         case "exists_regex":
                             Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tregex: {2}\n",
                                                     fileResult.FileItem.STRING_Path,
@@ -171,7 +175,6 @@ namespace Hedera
             GC.Collect();
         }
         #endregion
-
 
         #region Public Functions
         private static void Main(string[] args)
