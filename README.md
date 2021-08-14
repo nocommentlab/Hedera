@@ -12,6 +12,10 @@ The main purpose of this project is to speed up the IR detection phase using a s
 
 The **Indicator Database File** is written in yaml format and allows you to describe in simple manner the indicators that you want to search.
 
+## Use Cases
+
+TODO 
+
 ## What is the IDBF
 
 The **IDBF - Indicator Database File** is the file that Hedera uses to perform searches on the endpoints. It is divided in two main sections: the **header** and the **body**.
@@ -123,6 +127,21 @@ The **file** sub-property allows to search an IoC based on file indicator.
   value: C483AB042998E5D3F9AC1D5A7C7ABDB2
   is_recursive: true
 ```
+
+#### > **Process sub-property**
+
+TODO
+
+#### > **Event sub-property**
+
+TODO
+
+## More IDBFs Examples
+
+TODO
+
+## Usage
+
 
 ### Credits
 
