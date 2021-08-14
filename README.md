@@ -2,15 +2,15 @@
 
 # Hedera
 
-IoC scanner for Windows (only at the time).
+IoC scanner that supports only Windows at the moment.
 
 ## What is Hedera
 
-Hedera is an open source IoC ( Indicator of Compromise ) scanner that allows you to simplify the incident response phases in straightforward manner. It searches **registry**, **files**, **processes** and **events** indicators.
+Hedera is an open-source IoC ( Indicator of Compromise ) scanner that allows you to simplify the detection phase of an incident response straightforwardly. 
 
-The main purpose of this project is to speed up the IR detection phase using a structured form in which researchers or analysts can describe their once developed detection methods and make them shareable with others.
+The primary purpose of this project is to speed up the IR detection phase using a structured form in which researchers or analysts can describe their once-developed detection methods and make them shareable with others.
 
-The **Indicator Database File** is written in yaml format and allows you to describe in simple manner the indicators that you want to search.
+The **Indicator Database File** is written in YAML format and allows you to simply describe the indicators you want to search.
 
 ## Use Cases
 
@@ -18,13 +18,13 @@ TODO
 
 ## What is the IDBF
 
-The **IDBF - Indicator Database File** is the file that Hedera uses to perform searches on the endpoints. It is divided in two main sections: the **header** and the **body**.
+The **IDBF - Indicator Database File** is Hedera's file to perform searches on the endpoints. It is divided into two main sections: the **header** and the **body**.
 
 ### The info property
 
-The **info** property rappresents the header section and is always written on-top of the IDBF file. It is composed of the following fields:
+The **info** property represents the header section and is always written on top of the IDBF file. It is composed of the following fields:
 
-- **author**: this field contains the real-name or the nickname of the analyst that has written the IDBF file
+- **author**: this field contains the real name or the nickname of the analyst that has written the IDBF file
 - **date**: this field indicates the date when the IDBF file is written
 - **description**: this field contains a short description of the IDBF file.
 
@@ -44,11 +44,11 @@ info:
 
 ### The iocs property
 
-The **iocs** property rappresents the body section and could contains the following sub-properties: **registry**, **file**, **process** and **event**.
+The **iocs** property represents the body section and could contains the following sub-properties: **registry**, **file**, **process** and **event**.
 
 #### > **Registry sub-property**
 
-The **registry** sub-property allows to search an IoC based on registry indicator. 
+The **registry** sub-property allows searching an IoC based on the registry indicator. 
 
 Below the supported configurations:
 
@@ -75,7 +75,7 @@ Below the supported configurations:
 
 #### > **File sub-property**
 
-The **file** sub-property allows to search an IoC based on file indicator.
+The **file** sub-property allows searching an IoC based on the file indicator.
 
 ```yaml
 # Checks if a file exists in non-recursive mode
