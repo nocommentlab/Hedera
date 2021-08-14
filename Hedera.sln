@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hedera", "Hedera\Hedera.csproj", "{D1C54D8C-4B02-4432-BCE7-B8F4F64A229A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HederaLib", "HederaLib\HederaLib.csproj", "{EE8FFC28-CC22-4EEE-B7BD-FB41BF1A2992}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1C54D8C-4B02-4432-BCE7-B8F4F64A229A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C54D8C-4B02-4432-BCE7-B8F4F64A229A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C54D8C-4B02-4432-BCE7-B8F4F64A229A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C54D8C-4B02-4432-BCE7-B8F4F64A229A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8FFC28-CC22-4EEE-B7BD-FB41BF1A2992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8FFC28-CC22-4EEE-B7BD-FB41BF1A2992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8FFC28-CC22-4EEE-B7BD-FB41BF1A2992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8FFC28-CC22-4EEE-B7BD-FB41BF1A2992}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4FBBB3F9-260D-437E-9F38-EF330541F7E0}
+	EndGlobalSection
+EndGlobal
