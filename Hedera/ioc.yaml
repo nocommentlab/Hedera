@@ -1,7 +1,10 @@
 ﻿---
 info:
+  id: a224d312-c61e-4f45-ae85-9fc102e49e66
   author: Antonio Blescia
-  date: 08/03/2020
+  date: 2020/08/03
+  modified: 2021/08/19
+  status: experimental
   description: >
     descrizione\n
     riga 1\n
@@ -53,8 +56,17 @@ IoCs:
       is_recursive: true
     - type: imphash
       path: C:\Program Files
-      filename: ^firefox\.exe$
+      filename: .*
       value: C483AB042998E5D3F9AC1D5A7C7ABDB2
+      is_recursive: true
+    - type: yara
+      path: C:\test\documento.txt
+      rule: C:\test\file.yara
+      is_recursive: false
+    - type: yara
+      path: C:\test
+      filename: .*
+      rule: C:\test\file.yara
       is_recursive: true
   process:
     - type: exists
