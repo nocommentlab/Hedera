@@ -104,7 +104,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 
 ```yaml
 # Checks the SHA-256 hash value of a file to find recursively
-- type: imphash
+- type: hash
   path: C:\Program Files\Mozilla Firefox
   filename: ^firefox\.exe$
   sha256_hash: F98155B06D845E3218949E8BD959DA4741FFCD2736F963A11C7BCB7230460279
@@ -128,17 +128,75 @@ The **file** sub-property allows searching an IoC based on the file indicator.
   is_recursive: true
 ```
 
+```yaml
+# Finds the exe files that have the IMPHASH value
+# WARNING: this type of search could be very expensive 
+- type: imphash
+  path: C:\Program Files\Mozilla Firefox
+  filename: *.exe
+  value: C483AB042998E5D3F9AC1D5A7C7ABDB2
+  is_recursive: true
+```
+
+```yaml
+# Checks if the file satisfy the yara rule
+- type: yara
+  path: C:\test\documento.txt
+  rule: C:\test\file.yara
+  is_recursive: false
+```
+
+```yaml
+# Finds all files that statisfy the yara rule in recursive mode.
+# WARNING: this type of search could be very expensive 
+- type: yara
+  path: C:\test
+  filename: .*
+  rule: C:\test\file.yara
+  is_recursive: true
+```
+
 #### > **Process sub-property**
 
-TODO
+The **process** sub-property allows searching an IoC based on the process indicator.
+
+```yaml
+# Checks if there is a process named Calculator.exe in execution
+- type: exists
+  name: Calculator.exe
+```
+
+```yaml
+# Checks if there is a process named Calculator.exe with a specific hash in execution
+- type: hash
+  name: Calculator.exe
+  sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769
+```
 
 #### > **Event sub-property**
 
-TODO
+The **event** sub-property allows searching an IoC based on the event indicator.
+
+```yaml
+# Checks if there are events with event id 4672 inside the security channel
+- type: exists
+  log: security
+  event_id: 4672
+```
+
+```yaml
+# Checks if there are events with event id 1001 inside the application channel in a particula time range
+- type: exists
+  log: application
+  event_id: 1001
+  datetime_start: 15/12/2020 00:00:00
+  datetime_end: 15/12/2020 23:59:00
+  datetime_format: dd/MM/yyyy HH:mm:ss
+```
 
 ## More IDBFs Examples
 
-TODO
+The [ioc.yaml](./Hedera/ioc.yaml) file contains a lot of examples that you can study and reuse. 
 
 ## Usage
 
