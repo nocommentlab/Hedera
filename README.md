@@ -201,6 +201,7 @@ The [ioc.yaml](./Hedera/ioc.yaml) file contains a lot of examples that you can s
 
 ## Usage
 
+To start a scan, you simply run `Hedera.exe <idbf file path>`
 
 ### Credits
 
