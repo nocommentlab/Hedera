@@ -93,43 +93,47 @@ namespace Hedera
         {
             foreach (dynamic fileIoC in OBJECT_FileIoC)
             {
-                FileResult fileResult = await HederaLib.CheckFile(fileIoC);
-                if (null != fileResult && true == fileResult.Result)
+                List<FileResult> fileResults = await HederaLib.CheckFile(fileIoC);
+                if (null != fileResults && true == fileResults.Count > 0)
                 {
-                    switch (fileIoC["type"])
+                    foreach (FileResult fileResult in fileResults)
                     {
-                        case "exists":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
-                                                    fileResult.FileItem.STRING_Path,
-                                                    fileIoC["type"]));
-                            break;
-                        case "hash":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tSHA256 HASH: {2}\n",
-                                                    fileResult.FileItem.STRING_Path,
-                                                    fileIoC["type"],
-                                                    fileIoC["sha256_hash"]));
-                            break;
-                        case "imphash":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tIMPHASH: {2}\n",
-                                                    fileResult.FileItem.STRING_Path,
-                                                    fileIoC["type"],
-                                                    fileIoC["value"]));
-                            break;
-                        case "yara":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
-                                                    fileResult.FileItem.STRING_Path,
-                                                    fileIoC["type"]));
-                            break;
-                        case "exists_regex":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tregex: {2}\n",
-                                                    fileResult.FileItem.STRING_Path,
-                                                    fileIoC["type"],
-                                                    fileIoC["regex"]));
-                            break;
-                        default:
-                            break;
-                    }
+                        switch (fileIoC["type"])
+                        {
+                            case "exists":
 
+                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
+                                                        fileResult.FileItem.STRING_Path,
+                                                        fileIoC["type"]));
+                                break;
+                            case "hash":
+                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tSHA256 HASH: {2}\n",
+                                                        fileResult.FileItem.STRING_Path,
+                                                        fileIoC["type"],
+                                                        fileIoC["sha256_hash"]));
+                                break;
+                            case "imphash":
+                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tIMPHASH: {2}\n",
+                                                        fileResult.FileItem.STRING_Path,
+                                                        fileIoC["type"],
+                                                        fileIoC["value"]));
+                                break;
+                            case "yara":
+                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
+                                                        fileResult.FileItem.STRING_Path,
+                                                        fileIoC["type"]));
+                                break;
+                            case "exists_regex":
+                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tregex: {2}\n",
+                                                        fileResult.FileItem.STRING_Path,
+                                                        fileIoC["type"],
+                                                        fileIoC["regex"]));
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
                 }
             }
         }

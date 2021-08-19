@@ -50,9 +50,14 @@ namespace ncl.hedera.HederaLib.Helpers
         public static string CalculateImphash(string STRING_FilePath)
         {
             string STRING_ImpHash;
-
-            PeFile peFile = new(STRING_FilePath);
-            STRING_ImpHash = peFile.ImpHash ?? String.Empty;
+            PeFile peFile = null;
+            try
+            {
+                peFile = new(STRING_FilePath);
+            }
+            catch (Exception){}
+            
+            STRING_ImpHash = peFile?.ImpHash ?? String.Empty;
 
             return STRING_ImpHash;
         }
@@ -63,7 +68,7 @@ namespace ncl.hedera.HederaLib.Helpers
 
             List<ScanResult> results = QuickScan.File(STRING_FilePath, STRING_YaraRule);
 
-            if(results.Any())
+            if (results.Any())
             {
                 yaraResults = new();
 
@@ -184,19 +189,19 @@ namespace ncl.hedera.HederaLib.Helpers
         /// <param name="OBJECT_FileIoC">The dynamic FileIoC object reads from yaml file</param>
         /// <returns>True if exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static FileItem IsFileExists(dynamic OBJECT_FileIoC)
+        public static List<FileItem> IsFileExists(dynamic OBJECT_FileIoC)
         {
 
-            string STRING_Filename = null;
+            List<string> lSTRING_Filename = null;
 
-            FileItem fileItem = null;
+            List<FileItem> lFileItems = null;
 
             List<string> LIST_AccessibleFiles = new();
 
             if (false != bool.Parse(OBJECT_FileIoC["is_recursive"]))
             {
                 GetAllAccessibileFiles(OBJECT_FileIoC["path"], LIST_AccessibleFiles);
-                STRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), OBJECT_FileIoC["filename"], RegexOptions.IgnoreCase)).FirstOrDefault();
+                lSTRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), OBJECT_FileIoC["filename"], RegexOptions.IgnoreCase)).ToList();
 
                 /* Free the memory */
                 LIST_AccessibleFiles.Clear();
@@ -205,20 +210,34 @@ namespace ncl.hedera.HederaLib.Helpers
             }
             else
             {
-                STRING_Filename = File.Exists(OBJECT_FileIoC["path"]) ? OBJECT_FileIoC["path"] : null;
+
+                if (File.Exists(OBJECT_FileIoC["path"]))
+                {
+                    lSTRING_Filename = new();
+                    lSTRING_Filename.Add(OBJECT_FileIoC["path"]);
+
+                }
+
             }
 
-            if (null != STRING_Filename)
+            if (null != lSTRING_Filename && lSTRING_Filename.Count > 0)
             {
-                fileItem = new FileItem
+                lFileItems = new();
+                foreach (string STRING_Filename in lSTRING_Filename)
                 {
-                    STRING_Path = STRING_Filename,
-                    FILEATTRIBUTES_Attributes = File.GetAttributes(OBJECT_FileIoC["path"]),
-                    DATETIME_UTCCreationTime = File.GetCreationTimeUtc(OBJECT_FileIoC["path"]),
-                    FILESECURITY_ACL = null
-                };
+
+                    lFileItems.Add(
+                     new FileItem
+                     {
+                         STRING_Path = STRING_Filename,
+                         FILEATTRIBUTES_Attributes = File.GetAttributes(STRING_Filename),
+                         DATETIME_UTCCreationTime = File.GetCreationTimeUtc(STRING_Filename),
+                         FILESECURITY_ACL = null
+                     });
+                }
+
             }
-            return fileItem;
+            return lFileItems;
         }
         #endregion
 

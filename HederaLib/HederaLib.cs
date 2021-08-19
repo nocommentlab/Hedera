@@ -122,38 +122,48 @@ namespace ncl.hedera.HederaLib
         /// </summary>
         /// <param name="OBJECT_FileIoC">The File IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
-        public static Task<FileResult> CheckFile(dynamic OBJECT_FileIoC)
+        public static Task<List<FileResult>> CheckFile(dynamic OBJECT_FileIoC)
         {
-
-            FileResult fileResult = null;
-            FileItem fileItem;
+            bool BOOL_TempResult;
+            List<FileResult> lFileResult = null;
+            List<FileItem> lFileItem;
 
             OBJECT_FileIoC["path"] = Utils.ReplaceTemplate(OBJECT_FileIoC["path"]);
 
-            fileItem = Utils.IsFileExists(OBJECT_FileIoC);
+            lFileItem = Utils.IsFileExists(OBJECT_FileIoC);
 
-            if (null != fileItem)
+            if (null != lFileItem)
             {
-                fileResult = new FileResult
+                lFileResult = new();
+
+                foreach (FileItem fileItem in lFileItem)
                 {
-                    Result = (string)OBJECT_FileIoC["type"] switch
+                    BOOL_TempResult = (string)OBJECT_FileIoC["type"] switch
                     {
                         "exists" => true,
                         "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(OBJECT_FileIoC["sha256_hash"].ToLower()),
-                        "imphash"=> Utils.CalculateImphash(fileItem.STRING_Path)?.Equals(OBJECT_FileIoC["value"].ToLower()),
+                        "imphash" => Utils.CalculateImphash(fileItem.STRING_Path)?.Equals(OBJECT_FileIoC["value"].ToLower()),
                         "yara" => Utils.VerifyYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: OBJECT_FileIoC["rule"]).Count > 0,
                         _ => false
-                    },
+                    };
 
+                    if(true == BOOL_TempResult)
+                    { 
+                        lFileResult.Add(new FileResult
+                        {
+                            Result = true,
+                            FileItem = fileItem,
+                            GUID_ResultId = Guid.NewGuid(),
+                            Hostname = Dns.GetHostName(),
+                            DATETIME_Datetime = DateTime.Now
+                        });
 
-                    FileItem = fileItem,
-                    GUID_ResultId = Guid.NewGuid(),
-                    Hostname = Dns.GetHostName(),
-                    DATETIME_Datetime = DateTime.Now
-                };
+                    }
+                }
 
             }
-            return Task.FromResult<FileResult>(fileResult);
+
+            return Task.FromResult(lFileResult);
         }
 
         /// <summary>
