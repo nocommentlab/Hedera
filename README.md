@@ -12,9 +12,10 @@ The primary purpose of this project is to speed up the IR detection phase using 
 
 The **Indicator Database File** is written in YAML format and allows you to simply describe the indicators you want to search.
 
-## Use Cases
+This repository contains:
 
-TODO 
+- **Hedera**: the client that perform scanning
+- **HederaLib**: the core of the project that contains the api used by Hedera
 
 ## What is the IDBF
 
