@@ -67,24 +67,21 @@ namespace Hedera
 
                 if ((registryKeyResult is not null) && (registryKeyResult.Result))
                 {
-                    switch (registryIoC["type"])
+                    string STRING_OutputTrace = (string)registryIoC["type"] switch
                     {
-                        case "exists":
-
-                            WriteLine(($"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                        "exists" => $"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
                                               $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{ registryIoC["value_name_regex"]}]," +
                                               $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}," +
-                                              $"\n\tType: {registryIoC["type"]}\n").Warning());
-                        
+                                              $"\n\tType: {registryIoC["type"]}\n",
 
-                            break;
-                        case "data_value_regex":
-                            WriteLine(($"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                        "data_value_regex" => $"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
                                               $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{registryIoC["value_name_regex"]}]," +
                                               $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}[{registryIoC["value_data_regex"]}]," +
-                                              $"\n\tType: {registryIoC["type"]}\n").Warning());
-                            break;
-                    }
+                                              $"\n\tType: {registryIoC["type"]}\n",
+                        _ => throw new NotImplementedException()
+                    };
+
+                    WriteLine(STRING_OutputTrace.Warning());
 
                 }
 
@@ -96,44 +93,34 @@ namespace Hedera
             foreach (dynamic fileIoC in OBJECT_FileIoC)
             {
                 List<FileResult> fileResults = await HederaLib.CheckFile(fileIoC);
-                if (null != fileResults && true == fileResults.Count > 0)
+
+                if (fileResults is not null && fileResults.Count > 0)
                 {
                     foreach (FileResult fileResult in fileResults)
                     {
-                        switch (fileIoC["type"])
+                        string STRING_OutputTrace = (string)fileIoC["type"] switch
                         {
-                            case "exists":
+                            "exists" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                      $"\n\tType: {fileIoC["type"]}\n",
 
-                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
-                                                        fileResult.FileItem.STRING_Path,
-                                                        fileIoC["type"]));
-                                break;
-                            case "hash":
-                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tSHA256 HASH: {2}\n",
-                                                        fileResult.FileItem.STRING_Path,
-                                                        fileIoC["type"],
-                                                        fileIoC["sha256_hash"]));
-                                break;
-                            case "imphash":
-                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tIMPHASH: {2}\n",
-                                                        fileResult.FileItem.STRING_Path,
-                                                        fileIoC["type"],
-                                                        fileIoC["value"]));
-                                break;
-                            case "yara":
-                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1}\n",
-                                                        fileResult.FileItem.STRING_Path,
-                                                        fileIoC["type"]));
-                                break;
-                            case "exists_regex":
-                                Console.WriteLine(String.Format("[*] - Detected IoC on file!\n\tPath: {0}, \n\tType: {1},\n\tregex: {2}\n",
-                                                        fileResult.FileItem.STRING_Path,
-                                                        fileIoC["type"],
-                                                        fileIoC["regex"]));
-                                break;
-                            default:
-                                break;
-                        }
+                            "hash" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                    $"\n\tType: {fileIoC["type"]}," +
+                                    $"\n\tSHA256 HASH: {fileIoC["sha256_hash"]}\n",
+
+                            "imphash" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                        $"\n\tType: {fileIoC["type"]}," +
+                                        $"\n\tIMPHASH: {fileIoC["value"]}\n",
+
+                            "yara" => $"Detected IoC on file!\n\tPath: { fileResult.FileItem.STRING_Path}," +
+                                     $"\n\tType: { fileIoC["type"]}\n",
+
+                            "exists_regex" => $"Detected IoC on file!\n\tPath: { fileResult.FileItem.STRING_Path}," +
+                                             $"\n\tType: { fileIoC["type"]}," +
+                                             $"\n\tregex: { fileIoC["regex"]}\n",
+                            _ => throw new NotImplementedException()
+                        };
+
+                        WriteLine(STRING_OutputTrace.Warning());
 
                     }
                 }
@@ -146,20 +133,17 @@ namespace Hedera
                 bool? BOOL_Result = await HederaLib.CheckProcess(processIoC);
                 if (true == BOOL_Result)
                 {
-                    switch (processIoC["type"])
+                    string STRING_OutputTrace = (string)processIoC["type"] switch
                     {
-                        case "exists":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on process!\n\tName: {0}, \n\tType: {1}\n",
-                                                    processIoC["name"],
-                                                    processIoC["type"]));
-                            break;
-                        case "hash":
-                            Console.WriteLine(String.Format("[*] - Detected IoC on process!\n\tName: {0}, \n\tType: {1},\n\tSHA256 HASH: {2}\n",
-                                                    processIoC["name"],
-                                                    processIoC["type"],
-                                                    processIoC["sha256_hash"]));
-                            break;
-                    }
+                        "exists" => $"Detected IoC on process!\n\tName: {processIoC["name"]}," +
+                                   $"\n\tType: {processIoC["type"]}\n",
+                        "hash" => $"Detected IoC on process!\n\tName: {processIoC["name"]}," +
+                                   $"\n\tType: {processIoC["type"]}," +
+                                   $"\n\tSHA256 HASH: {processIoC["sha256_hash"]}\n",
+                        _ => throw new NotImplementedException()
+                    };
+
+                    WriteLine(STRING_OutputTrace.Warning());
                 }
             }
         }
@@ -170,9 +154,11 @@ namespace Hedera
             foreach (dynamic eventIoC in OBJECT_EventIoC)
             {
                 bool? BOOL_Result = await HederaLib.CheckEvent(eventIoC, ref lEventLogEntries);
-                lEventLogEntries.ForEach(eventLogEntry =>
+                lEventLogEntries?.ForEach(eventLogEntry =>
                 {
-                    Console.WriteLine($"[*] - Detected IoC on event!\n\tData: {eventLogEntry.TimeGenerated}, \n\tType: {eventLogEntry.EntryType},\n\tMessage: {eventLogEntry.Message}\n");
+                    WriteLine(($"Detected IoC on event!\n\tData: {eventLogEntry.TimeGenerated}," +
+                              $"\n\tType: {eventLogEntry.EntryType}," +
+                              $"\n\tMessage: {eventLogEntry.Message}\n").Warning());
                 }
                 );
             }
