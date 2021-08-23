@@ -1,6 +1,7 @@
 ﻿using libyaraNET;
 using Microsoft.Win32;
 using ncl.hedera.HederaLib.Models;
+using ncl.hedera.HederaLib.Models.Configuration;
 using PeNet;
 using System;
 using System.Collections.Generic;
@@ -122,27 +123,25 @@ namespace ncl.hedera.HederaLib.Helpers
         /// <param name="OBJECT_RegistryIoC">The dynamic RegistryIoC object reads from yaml file</param>
         /// <returns>The registry data value, otherwise null</returns>
         [SupportedOSPlatform("windows")]
-        public static RegistryItem ReadRegistryDataValue(dynamic OBJECT_RegistryIoC)
+        public static RegistryItem ReadRegistryDataValue(RegistryIndicator registryIoc)
         {
             RegistryItem registryItem = null;
 
             RegistryKey REGISTRY_RegistryKey;
 
-            RegistryKey REGISTRYKEY_BaseRegistry = SetBaseRegistryKey(OBJECT_RegistryIoC["base_key"]);
+            RegistryKey REGISTRYKEY_BaseRegistry = SetBaseRegistryKey(registryIoc.BaseKey);
 
             if (null != REGISTRYKEY_BaseRegistry)
             {
-                REGISTRY_RegistryKey = REGISTRYKEY_BaseRegistry.OpenSubKey(OBJECT_RegistryIoC["key"]);
+                REGISTRY_RegistryKey = REGISTRYKEY_BaseRegistry.OpenSubKey(registryIoc.Key);
                 if (null != REGISTRY_RegistryKey)
                 {
-                    if (bool.Parse(OBJECT_RegistryIoC["is_recursive"]))
-                        SearchSubKeys(REGISTRY_RegistryKey, OBJECT_RegistryIoC["value_name_regex"], ref registryItem);
+                    if (registryIoc.IsRecursive)
+                        SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref registryItem);
                     else
                     {
                         string STRING_ValueName = REGISTRY_RegistryKey.GetValueNames().ToList<string>()
-                                                .FirstOrDefault(valueName => Regex.IsMatch(valueName, OBJECT_RegistryIoC["value_name_regex"]));
-                        /*List<string> test = REGISTRY_RegistryKey.GetValueNames().ToList<string>()
-                                                .Where(valueName => Regex.IsMatch(valueName, OBJECT_RegistryIoC["value_name_regex"])).ToList();*/
+                                                .FirstOrDefault(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex));
                         if (STRING_ValueName != null)
                         {
                             registryItem = new RegistryItem
@@ -189,7 +188,7 @@ namespace ncl.hedera.HederaLib.Helpers
         /// <param name="OBJECT_FileIoC">The dynamic FileIoC object reads from yaml file</param>
         /// <returns>True if exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static List<FileItem> IsFileExists(dynamic OBJECT_FileIoC)
+        public static List<FileItem> IsFileExists(FileIndicator fileIoc)
         {
 
             List<string> lSTRING_Filename = null;
@@ -198,10 +197,10 @@ namespace ncl.hedera.HederaLib.Helpers
 
             List<string> LIST_AccessibleFiles = new();
 
-            if (false != bool.Parse(OBJECT_FileIoC["is_recursive"]))
+            if (fileIoc.IsRecursive)
             {
-                GetAllAccessibileFiles(OBJECT_FileIoC["path"], LIST_AccessibleFiles);
-                lSTRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), OBJECT_FileIoC["filename"], RegexOptions.IgnoreCase)).ToList();
+                GetAllAccessibileFiles(fileIoc.Path, LIST_AccessibleFiles);
+                lSTRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), fileIoc.Filename, RegexOptions.IgnoreCase)).ToList();
 
                 /* Free the memory */
                 LIST_AccessibleFiles.Clear();
@@ -211,10 +210,10 @@ namespace ncl.hedera.HederaLib.Helpers
             else
             {
 
-                if (File.Exists(OBJECT_FileIoC["path"]))
+                if (File.Exists(fileIoc.Path))
                 {
                     lSTRING_Filename = new();
-                    lSTRING_Filename.Add(OBJECT_FileIoC["path"]);
+                    lSTRING_Filename.Add(fileIoc.Path);
 
                 }
 

@@ -1,5 +1,6 @@
 ﻿using ncl.hedera.HederaLib.Helpers;
 using ncl.hedera.HederaLib.Models;
+using ncl.hedera.HederaLib.Models.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace ncl.hedera.HederaLib
 {
@@ -45,6 +47,7 @@ namespace ncl.hedera.HederaLib
         /// Constructor
         /// </summary>
         /// <param name="STRING_IocConfigFile">The IoC configuration file path</param>
+        [Obsolete]
         public HederaLib(string STRING_IocConfigFile)
         {
             _STRING_IocConfigFile = STRING_IocConfigFile;
@@ -54,12 +57,21 @@ namespace ncl.hedera.HederaLib
         /// Deserialize the Yaml configuration file
         /// </summary>
         /// <returns>The dynamic object deserialized</returns>
-        public dynamic DeserializeIoCConfiguration()
+        public static Config DeserializeIoCConfiguration(string STRING_IocFile)
         {
-            StringReader stringReader = new(File.ReadAllText(_STRING_IocConfigFile));
 
-            var deserializer = new Deserializer();
-            return deserializer.Deserialize<dynamic>(stringReader);
+            Config CONFIG_HederaConfiguration = null;
+            try
+            {
+                var deserializer = new DeserializerBuilder()
+                                   .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                                   .Build();
+                
+                CONFIG_HederaConfiguration = deserializer.Deserialize<Config>(File.ReadAllText(STRING_IocFile));
+            }
+            catch (Exception)
+            { }
+            return CONFIG_HederaConfiguration;
 
         }
 
@@ -69,43 +81,27 @@ namespace ncl.hedera.HederaLib
         /// <param name="OBJECT_RegistryIoC">The Registry IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static Task<RegistryKeyResult> CheckRegistryKey(dynamic OBJECT_RegistryIoC)
+        public static Task<RegistryKeyResult> CheckRegistryKey(RegistryIndicator registryIoc)
         {
 
             RegistryKeyResult registryKeyResult = null;
 
-            OBJECT_RegistryIoC["key"] = Utils.ReplaceTemplate(OBJECT_RegistryIoC["key"]);
+            registryIoc.Key = Utils.ReplaceTemplate(registryIoc.Key);
             // Extracts the registry data value
-            RegistryItem OBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(OBJECT_RegistryIoC);
+            RegistryItem OBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(registryIoc);
 
             if (null != OBJECT_ExtractedDataValue)
             {
 
                 registryKeyResult = new();
 
-                registryKeyResult.Result = (string)OBJECT_RegistryIoC["type"] switch
+                registryKeyResult.Result = registryIoc.Type switch
                 {
                     "exists" => (OBJECT_ExtractedDataValue != null),
                     "data_value_regex" => ((null != OBJECT_ExtractedDataValue) &&
-                                            Regex.IsMatch(OBJECT_ExtractedDataValue.OBJECT_ValueData.ToString(), OBJECT_RegistryIoC["value_data_regex"], RegexOptions.IgnoreCase)),
+                                            Regex.IsMatch(OBJECT_ExtractedDataValue.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
                     _ => false
                 };
-
-                //switch ((string)OBJECT_RegistryIoC["type"])
-                //{
-                //    case "exists":
-                //        registryKeyResult.Result = (OBJECT_ExtractedDataValue != null);
-                //        break;
-
-                //    case "data_value_regex":
-                //        registryKeyResult.Result = ((null != OBJECT_ExtractedDataValue) &&
-                //                            Regex.IsMatch(OBJECT_ExtractedDataValue.OBJECT_ValueData.ToString(), OBJECT_RegistryIoC["value_data_regex"], RegexOptions.IgnoreCase));
-                //        break;
-                //    default:
-                //        registryKeyResult.Result = false;
-                //        break;
-                //}
-
 
                 registryKeyResult.RegistryItem = OBJECT_ExtractedDataValue;
 
@@ -122,15 +118,17 @@ namespace ncl.hedera.HederaLib
         /// </summary>
         /// <param name="OBJECT_FileIoC">The File IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
-        public static Task<List<FileResult>> CheckFile(dynamic OBJECT_FileIoC)
+        [SupportedOSPlatform("windows")]
+        public static Task<List<FileResult>> CheckFile(FileIndicator fileIoc)
         {
             bool BOOL_TempResult;
             List<FileResult> lFileResult = null;
             List<FileItem> lFileItem;
 
-            OBJECT_FileIoC["path"] = Utils.ReplaceTemplate(OBJECT_FileIoC["path"]);
+            
+            fileIoc.Path = Utils.ReplaceTemplate(fileIoc.Path);
 
-            lFileItem = Utils.IsFileExists(OBJECT_FileIoC);
+            lFileItem = Utils.IsFileExists(fileIoc);
 
             if (null != lFileItem)
             {
@@ -138,17 +136,17 @@ namespace ncl.hedera.HederaLib
 
                 foreach (FileItem fileItem in lFileItem)
                 {
-                    BOOL_TempResult = (string)OBJECT_FileIoC["type"] switch
+                    BOOL_TempResult = fileIoc.Type switch
                     {
                         "exists" => true,
-                        "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(OBJECT_FileIoC["sha256_hash"].ToLower()),
-                        "imphash" => Utils.CalculateImphash(fileItem.STRING_Path)?.Equals(OBJECT_FileIoC["value"].ToLower()),
-                        "yara" => Utils.VerifyYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: OBJECT_FileIoC["rule"]).Count > 0,
+                        "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(fileIoc.Sha256Hash.ToLower()),
+                        "imphash" => Utils.CalculateImphash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
+                        "yara" => Utils.VerifyYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule).Count > 0,
                         _ => false
                     };
 
-                    if(true == BOOL_TempResult)
-                    { 
+                    if (true == BOOL_TempResult)
+                    {
                         lFileResult.Add(new FileResult
                         {
                             Result = true,
@@ -171,13 +169,13 @@ namespace ncl.hedera.HederaLib
         /// </summary>
         /// <param name="OBJECT_ProcessIoC">The Process IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
-        public static Task<bool> CheckProcess(dynamic OBJECT_ProcessIoC)
+        public static Task<bool> CheckProcess(ProcessIndicator processIoc)
         {
             bool BOOL_CheckResult = false;
-            BOOL_CheckResult = (string)OBJECT_ProcessIoC["type"] switch
+            BOOL_CheckResult = processIoc.Type switch
             {
-                "exists" => Helpers.Process.GetAccessibleProcesses().Where(process => process.MainModule.ModuleName.Equals(OBJECT_ProcessIoC["name"])).Any(),
-                "hash" => Helpers.Process.GetProcessByExecutableName((string)OBJECT_ProcessIoC["name"]).Where(process => string.Compare(Helpers.Utils.CalculateSha256Hash(process.MainModule.FileName), OBJECT_ProcessIoC["sha256_hash"], true) == 0).Any(),
+                "exists" => Helpers.Process.GetAccessibleProcesses().Where(process => process.MainModule.ModuleName.Equals(processIoc.Name)).Any(),
+                "hash" => Helpers.Process.GetProcessByExecutableName(processIoc.Name).Where(process => string.Compare(Helpers.Utils.CalculateSha256Hash(process.MainModule.FileName), processIoc.Sha256Hash, true) == 0).Any(),
                 _ => false,
             };
             return Task.FromResult<bool>(BOOL_CheckResult);

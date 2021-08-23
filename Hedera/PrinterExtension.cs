@@ -22,7 +22,7 @@ namespace Hedera
 
         public static string Warning(this string STRING_Message)
         {
-            return $"{"[WARN]".Pastel(Color.Black).PastelBg("FF9800")} - {STRING_Message}";
+            return $"{"[WARN]".Pastel(Color.Blue).PastelBg("FF9800")} - {STRING_Message}";
         }
     }
 }
