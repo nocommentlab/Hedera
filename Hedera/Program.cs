@@ -1,5 +1,6 @@
 ﻿using ncl.hedera.HederaLib;
 using ncl.hedera.HederaLib.Models;
+using ncl.hedera.HederaLib.Models.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +19,6 @@ namespace Hedera
 
         #region Members
         private static string _STRING_IocFile = String.Empty;
-        private static HederaLib _hederaLib = null;
         #endregion
 
         #region Properties
@@ -31,22 +31,21 @@ namespace Hedera
         /// </summary>
         /// <param name="OBJECT_Ioc">The deserialized Yaml File</param>
         /// <returns>True if the yaml file is correct validated, otherwise false</returns>
-        private static bool ValidateAndPrintIoCSummary(dynamic OBJECT_Ioc)
+        private static bool ValidateAndPrintIoCSummary(Config config)
         {
             bool BOOL_IsIocFileDescriptorValid;
             try
             {
-
-                //WriteLine(string.Format("Author: {0}", OBJECT_Ioc["info"]["author"]));
-                WriteLine($"Description: {OBJECT_Ioc["info"]["description"]}".Info());
-                WriteLine($"Author: {OBJECT_Ioc["info"]["author"]}".Info());
-                WriteLine($"Date: {OBJECT_Ioc["info"]["date"]}".Info());
-                WriteLine($"Modified: {OBJECT_Ioc["info"]["modified"]}".Info());
-                WriteLine($"RoleId: {OBJECT_Ioc["info"]["id"]}".Info());
-                WriteLine($"Status: {OBJECT_Ioc["info"]["status"]}".Info());
-                WriteLine($"Registry IoC: { OBJECT_Ioc["IoCs"]["registry"].Count}".Info());
-                WriteLine($"File IoC: {OBJECT_Ioc["IoCs"]["file"].Count}".Info());
-                WriteLine($"Process IoC: {OBJECT_Ioc["IoCs"]["process"].Count}".Info());
+                WriteLine($"Description: {config.Information.Description}".Info());
+                WriteLine($"Author: {config.Information.Author}".Info());
+                WriteLine($"Date: {config.Information.Date}".Info());
+                WriteLine($"Modified: {config.Information.Modified}".Info());
+                WriteLine($"GUID: {config.Information.Guid}".Info());
+                WriteLine($"Status: {config.Information.Status}".Info());
+                WriteLine($"Registry IoC: { config.Indicators.Registry?.Count}".Info());
+                WriteLine($"File IoC: {config.Indicators.File?.Count}".Info());
+                WriteLine($"Process IoC: {config.Indicators.Process?.Count }".Info());
+                WriteLine($"Event IoC: {config.Indicators.Event?.Count}".Info());
                 WriteLine("");
                 BOOL_IsIocFileDescriptorValid = true;
             }
@@ -58,26 +57,30 @@ namespace Hedera
 
             return BOOL_IsIocFileDescriptorValid;
         }
-        private static async Task CheckRegistry(dynamic OBJECT_RegistryIoC)
+
+        [SupportedOSPlatform("windows")]
+        private static async Task CheckRegistry(List<RegistryIndicator> lRegistryIndicator)
         {
-            foreach (dynamic registryIoC in OBJECT_RegistryIoC)
+            foreach (RegistryIndicator registryIoC in lRegistryIndicator)
             {
                 RegistryKeyResult registryKeyResult = await HederaLib.CheckRegistryKey(registryIoC);
 
 
                 if ((registryKeyResult is not null) && (registryKeyResult.Result))
                 {
-                    string STRING_OutputTrace = (string)registryIoC["type"] switch
+                    string STRING_OutputTrace = registryIoC.Type switch
                     {
-                        "exists" => $"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
-                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{ registryIoC["value_name_regex"]}]," +
+                        "exists" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}" + 
+                                              $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{ registryIoC.ValueNameRegex}]," +
                                               $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}," +
-                                              $"\n\tType: {registryIoC["type"]}\n",
+                                              $"\n\tType: {registryIoC.Type}\n",
 
-                        "data_value_regex" => $"Detected IoC on registry!\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
-                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{registryIoC["value_name_regex"]}]," +
-                                              $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}[{registryIoC["value_data_regex"]}]," +
-                                              $"\n\tType: {registryIoC["type"]}\n",
+                        "data_value_regex" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}"+
+                                              $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{registryIoC.ValueNameRegex}]," +
+                                              $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}[{registryIoC.ValueDataRegex}]," +
+                                              $"\n\tType: {registryIoC.Type}\n",
                         _ => throw new NotImplementedException()
                     };
 
@@ -88,9 +91,11 @@ namespace Hedera
             }
 
         }
-        private static async Task CheckFile(dynamic OBJECT_FileIoC)
+        
+        [SupportedOSPlatform("windows")]
+        private static async Task CheckFile(List<FileIndicator> lFileIndicators)
         {
-            foreach (dynamic fileIoC in OBJECT_FileIoC)
+            foreach (FileIndicator fileIoC in lFileIndicators)
             {
                 List<FileResult> fileResults = await HederaLib.CheckFile(fileIoC);
 
@@ -98,25 +103,30 @@ namespace Hedera
                 {
                     foreach (FileResult fileResult in fileResults)
                     {
-                        string STRING_OutputTrace = (string)fileIoC["type"] switch
+                        string STRING_OutputTrace = fileIoC.Type switch
                         {
-                            "exists" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                      $"\n\tType: {fileIoC["type"]}\n",
+                            "exists" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}"+
+                                      $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                      $"\n\tType: {fileIoC.Type}\n",
 
-                            "hash" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                    $"\n\tType: {fileIoC["type"]}," +
-                                    $"\n\tSHA256 HASH: {fileIoC["sha256_hash"]}\n",
+                            "hash" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
+                                    $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                    $"\n\tType: {fileIoC.Type}," +
+                                    $"\n\tSHA256 HASH: {fileIoC.Sha256Hash}\n",
 
-                            "imphash" => $"Detected IoC on file!\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                        $"\n\tType: {fileIoC["type"]}," +
-                                        $"\n\tIMPHASH: {fileIoC["value"]}\n",
+                            "imphash" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
+                                        $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
+                                        $"\n\tType: {fileIoC.Type}," +
+                                        $"\n\tIMPHASH: {fileIoC.Value}\n",
 
-                            "yara" => $"Detected IoC on file!\n\tPath: { fileResult.FileItem.STRING_Path}," +
-                                     $"\n\tType: { fileIoC["type"]}\n",
+                            "yara" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
+                                     $"\n\tPath: { fileResult.FileItem.STRING_Path}," +
+                                     $"\n\tType: { fileIoC.Type}\n",
 
-                            "exists_regex" => $"Detected IoC on file!\n\tPath: { fileResult.FileItem.STRING_Path}," +
-                                             $"\n\tType: { fileIoC["type"]}," +
-                                             $"\n\tregex: { fileIoC["regex"]}\n",
+                            "exists_regex" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
+                                             $"\n\tPath: { fileResult.FileItem.STRING_Path}," +
+                                             $"\n\tType: { fileIoC.Type}," +
+                                             $"\n\tregex: { fileIoC.Filename}\n",
                             _ => throw new NotImplementedException()
                         };
 
@@ -126,20 +136,23 @@ namespace Hedera
                 }
             }
         }
-        private static async Task CheckProcess(dynamic OBJECT_ProcessIoC)
+        
+        private static async Task CheckProcess(List<ProcessIndicator> lProcessIndicators)
         {
-            foreach (dynamic processIoC in OBJECT_ProcessIoC)
+            foreach (ProcessIndicator processIoC in lProcessIndicators)
             {
                 bool? BOOL_Result = await HederaLib.CheckProcess(processIoC);
                 if (true == BOOL_Result)
                 {
-                    string STRING_OutputTrace = (string)processIoC["type"] switch
+                    string STRING_OutputTrace = processIoC.Type switch
                     {
-                        "exists" => $"Detected IoC on process!\n\tName: {processIoC["name"]}," +
-                                   $"\n\tType: {processIoC["type"]}\n",
-                        "hash" => $"Detected IoC on process!\n\tName: {processIoC["name"]}," +
-                                   $"\n\tType: {processIoC["type"]}," +
-                                   $"\n\tSHA256 HASH: {processIoC["sha256_hash"]}\n",
+                        "exists" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
+                                    $"\n\tName: {processIoC.Name}," +
+                                    $"\n\tType: {processIoC.Type}\n",
+                        "hash" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
+                                  $"\n\tName: {processIoC.Name}," +
+                                  $"\n\tType: {processIoC.Type}," +
+                                  $"\n\tSHA256 HASH: {processIoC.Sha256Hash}\n",
                         _ => throw new NotImplementedException()
                     };
 
@@ -147,16 +160,18 @@ namespace Hedera
                 }
             }
         }
+        
         [SupportedOSPlatform("windows")]
-        private static async Task CheckEvent(dynamic OBJECT_EventIoC)
+        private static async Task CheckEvent(List<EventIndicator> lEventIndicators)
         {
             List<EventLogEntry> lEventLogEntries = null;
-            foreach (dynamic eventIoC in OBJECT_EventIoC)
+            foreach (EventIndicator eventIoC in lEventIndicators)
             {
                 bool? BOOL_Result = await HederaLib.CheckEvent(eventIoC, ref lEventLogEntries);
                 lEventLogEntries?.ForEach(eventLogEntry =>
                 {
-                    WriteLine(($"Detected IoC on event!\n\tData: {eventLogEntry.TimeGenerated}," +
+                    WriteLine(($"Detected IoC on event!\n\tGUID: {eventIoC.Guid}" +
+                              $"\n\tData: {eventLogEntry.TimeGenerated}," +
                               $"\n\tType: {eventLogEntry.EntryType}," +
                               $"\n\tMessage: {eventLogEntry.Message}\n").Warning());
                 }
@@ -176,24 +191,25 @@ namespace Hedera
             _STRING_IocFile = (args.Length == 0) ? DEFAULT_CONFIG_FILE : args[0];
 
             // Deserialize the ioc configuration file
-            _hederaLib = new HederaLib(_STRING_IocFile);
-            var deserializedYaml = _hederaLib.DeserializeIoCConfiguration();
+            Config deserializedYaml = HederaLib.DeserializeIoCConfiguration(_STRING_IocFile);
 
             // Checks if the file has the correct structure and print its summary
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
 
-                var CheckEventTask = Task.Factory.StartNew(() => { if (((Dictionary<Object, Object>)deserializedYaml["IoCs"]).ContainsKey(@"event")) CheckEvent(deserializedYaml["IoCs"][@"event"]); });
-                var CheckFileTask = Task.Factory.StartNew(() => { if (((Dictionary<Object, Object>)deserializedYaml["IoCs"]).ContainsKey(@"file")) CheckFile(deserializedYaml["IoCs"][@"file"]); });
-                var CheckProcessTask = Task.Factory.StartNew(() => { if (((Dictionary<Object, Object>)deserializedYaml["IoCs"]).ContainsKey(@"process")) CheckProcess(deserializedYaml["IoCs"][@"process"]); });
-                var CheckRegistryTask = Task.Factory.StartNew(() => { if (((Dictionary<Object, Object>)deserializedYaml["IoCs"]).ContainsKey(@"registry")) CheckRegistry(deserializedYaml["IoCs"][@"registry"]); });
+                var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
+                var CheckFileTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.File != null) CheckFile(deserializedYaml.Indicators.File); });
+                var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
+                var CheckRegistryTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Registry != null) CheckRegistry(deserializedYaml.Indicators.Registry); });
 
                 Task.WaitAll(CheckEventTask, CheckFileTask, CheckProcessTask, CheckRegistryTask);
+
+
 
                 WriteLine("Scan Finished!".Info());
             }
 
-            Console.Read();
+            Read();
         }
         #endregion
 
