@@ -5,10 +5,10 @@ info:
   date: 2020/08/03
   modified: 2021/08/19
   status: experimental
-  description: >
-    descrizione\n
-    riga 1\n
-    riga 2\n
+  description: |
+    descrizione
+    riga 1
+    riga 2
     riga 3
 IoCs:
   registry:
