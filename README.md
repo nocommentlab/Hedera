@@ -23,29 +23,35 @@ The **IDBF - Indicator Database File** is Hedera's file to perform searches on t
 
 ### The info property
 
-The **info** property represents the header section and is always written on top of the IDBF file. It is composed of the following fields:
+The **information** property represents the header section and is always written on top of the IDBF file. It is composed of the following fields:
 
+- **guid**: yaml file unique identifier
 - **author**: this field contains the real name or the nickname of the analyst that has written the IDBF file
 - **date**: this field indicates the date when the IDBF file is written
+- **modified**: last modification date
+- **status**: yaml file configuration status. It could be `experimental` or `stable` 
 - **description**: this field contains a short description of the IDBF file.
 
 Example:
 
 ```yaml
 ---
-info:
+information:
+  guid: a224d312-c61e-4f45-ae85-9fc102e49e66
   author: Antonio Blescia
-  date: 08/03/2020
-  description: >
-    short description\n
-    row 1\n
-    row 2\n
-    row 3
+  date: 2020/08/03
+  modified: 2021/08/23
+  status: experimental
+  description: |
+    descrizione
+    riga 1
+    riga 2
+    riga 3
 ```
 
-### The iocs property
+### The indicators property
 
-The **iocs** property represents the body section and could contains the following sub-properties: **registry**, **file**, **process** and **event**.
+The **indicators** property represents the body section and could contains the following sub-properties: **registry**, **file**, **process** and **event**.
 
 #### > **Registry sub-property**
 
@@ -57,6 +63,7 @@ Below the supported configurations:
 # Searches using regular expression a value name that matches to ^IsMRUEstablishedd?$ regex inside the HKEY_USERS\{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows registry.
 # The {{sid}} is replaced with the user SID value at runtime
 - type: exists
+  guid: 16a97688-3df8-4e02-bce8-778d982d3e32
   base_key: HKEY_USERS
   key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows'
   value_name_regex: ^IsMRUEstablishedd?$
@@ -67,6 +74,7 @@ Below the supported configurations:
 # Searches using regular expression a value name that matches to ^Device$ regex and value data that matches to ^Microsoft.*$ regex inside the HKEY_USERS\{{sid}}\Software\Microsoft\Windows NT registry. In this case the recursive search is enabled.
 # The {{sid}} is replaced with the user SID value at runtime 
 - type: data_value_regex
+  guid: 904de9b0-a4d7-4e39-8fd2-754324a4d29b
   base_key: HKEY_USERS
   key: '{{sid}}\Software\Microsoft\Windows NT'
   value_name_regex: ^Device$
