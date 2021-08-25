@@ -89,6 +89,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 ```yaml
 # Checks if a file exists in non-recursive mode
 - type: exists
+  guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
   path: C:\Program Files\Mozilla Firefox\firefox.exe
   is_recursive: false
 ```
@@ -98,6 +99,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 # The {{user}} is replaced with the user name value at runtime
 
 - type: exists
+  guid: 42d17885-ce39-4b8b-a542-ac4751eaabc5
   path: C:\Users\{{user}}
   filename: ^file\.exe$
   is_recursive: true
@@ -106,6 +108,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 ```yaml
 # Checks the SHA-256 hash value of a spacific file
 - type: hash
+  guid: 22560d93-197b-4488-8d6e-a780a2ae5067
   path: C:\Program Files\Mozilla Firefox\firefox.exe
   sha256_hash: F98155B06D845E3218949E8BD959DA4741FFCD2736F963A11C7BCB7230460279
   is_recursive: false
@@ -114,6 +117,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 ```yaml
 # Checks the SHA-256 hash value of a file to find recursively
 - type: hash
+  guid: 07114ca5-d93c-47e3-abae-954fa23842a6
   path: C:\Program Files\Mozilla Firefox
   filename: ^firefox\.exe$
   sha256_hash: F98155B06D845E3218949E8BD959DA4741FFCD2736F963A11C7BCB7230460279
@@ -123,6 +127,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 ```yaml
 # Checks the IMPHASH hash value of a spacific file
 - type: imphash
+  guid: 53c88a83-33b8-49e5-b309-71cea51b8357
   path: C:\Program Files\Mozilla Firefox\firefox.exe
   value: C483AB042998E5D3F9AC1D5A7C7ABDB2
   is_recursive: false
@@ -132,6 +137,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 # Checks the IMPHASH hash value of a file to find recursively
 - type: imphash
   path: C:\Program Files\Mozilla Firefox
+  guid: 090dcd6d-faa6-4f3c-8353-aae7317a1ba9
   filename: ^firefox\.exe$
   value: C483AB042998E5D3F9AC1D5A7C7ABDB2
   is_recursive: true
@@ -142,6 +148,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 # WARNING: this type of search could be very expensive 
 - type: imphash
   path: C:\Program Files\Mozilla Firefox
+  guid: 068028a4-2f18-4d85-adb7-960b922ceab7
   filename: *.exe
   value: C483AB042998E5D3F9AC1D5A7C7ABDB2
   is_recursive: true
@@ -150,6 +157,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 ```yaml
 # Checks if the file satisfy the yara rule
 - type: yara
+  guid: 9e001cdd-5928-4c27-be33-c3dab057207c
   path: C:\test\documento.txt
   rule: C:\test\file.yara
   is_recursive: false
@@ -159,6 +167,7 @@ The **file** sub-property allows searching an IoC based on the file indicator.
 # Finds all files that statisfy the yara rule in recursive mode.
 # WARNING: this type of search could be very expensive 
 - type: yara
+  guid: c8dc388e-642c-4911-a7d7-c33fe7750baa
   path: C:\test
   filename: .*
   rule: C:\test\file.yara
@@ -172,12 +181,14 @@ The **process** sub-property allows searching an IoC based on the process indica
 ```yaml
 # Checks if there is a process named Calculator.exe in execution
 - type: exists
+  guid: 21174833-527a-46a9-afdd-eab618180e63
   name: Calculator.exe
 ```
 
 ```yaml
 # Checks if there is a process named Calculator.exe with a specific hash in execution
 - type: hash
+  guid: f099098d-3831-4bdf-9304-9e14194cd0a1
   name: Calculator.exe
   sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769
 ```
@@ -189,6 +200,7 @@ The **event** sub-property allows searching an IoC based on the event indicator.
 ```yaml
 # Checks if there are events with event id 4672 inside the security channel
 - type: exists
+  guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a
   log: security
   event_id: 4672
 ```
@@ -196,6 +208,7 @@ The **event** sub-property allows searching an IoC based on the event indicator.
 ```yaml
 # Checks if there are events with event id 1001 inside the application channel in a particula time range
 - type: exists
+  guid: 20b43436-ef85-44a8-8566-dca85a3b3855
   log: application
   event_id: 1001
   datetime_start: 15/12/2020 00:00:00
