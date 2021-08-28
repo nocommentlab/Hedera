@@ -69,8 +69,10 @@ namespace ncl.hedera.HederaLib
                 
                 CONFIG_HederaConfiguration = deserializer.Deserialize<Config>(File.ReadAllText(STRING_IocFile));
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return CONFIG_HederaConfiguration;
 
         }
@@ -164,6 +166,52 @@ namespace ncl.hedera.HederaLib
             return Task.FromResult(lFileResult);
         }
 
+
+        /// <summary>
+        /// Checks the file IoC
+        /// </summary>
+        /// <param name="OBJECT_FileIoC">The File IoC object</param>
+        /// <returns>True if the IoC exists, otherwise false</returns>
+        [SupportedOSPlatform("windows")]
+        public static Task<List<PipeResult>> CheckPipe(PipeIndicator pipeIoC)
+        {
+            bool BOOL_TempResult;
+            List<PipeResult> lPipeResult = null;
+            List<string> lNamedPipe;
+
+
+            lNamedPipe = Utils.CheckNamedPipeExists(pipeIoC.Name);
+
+            if (null != lNamedPipe)
+            {
+                lPipeResult = new();
+
+                foreach (string namedPipe in lNamedPipe)
+                {
+                    BOOL_TempResult = pipeIoC.Type switch
+                    {
+                        "exists" => true,
+                        _ => false
+                    };
+
+                    if (true == BOOL_TempResult)
+                    {
+                        lPipeResult.Add(new PipeResult
+                        {
+                            Result = true,
+                            Name = namedPipe,
+                            GUID_ResultId = Guid.NewGuid(),
+                            Hostname = Dns.GetHostName(),
+                            DATETIME_Datetime = DateTime.Now
+                        });
+
+                    }
+                }
+
+            }
+
+            return Task.FromResult(lPipeResult);
+        }
         /// <summary>
         /// Checks the process IoC
         /// </summary>

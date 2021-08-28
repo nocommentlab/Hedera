@@ -12,5 +12,6 @@ namespace ncl.hedera.HederaLib.Models.Configuration
         public List<FileIndicator> File { get; init; }
         public List<ProcessIndicator> Process { get; init; }
         public List<EventIndicator> Event { get; init; }
+        public List<PipeIndicator> Pipe { get; init; }
     }
 }

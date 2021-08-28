@@ -46,7 +46,9 @@ namespace Hedera
                 WriteLine($"File IoC: {config.Indicators.File?.Count}".Info());
                 WriteLine($"Process IoC: {config.Indicators.Process?.Count }".Info());
                 WriteLine($"Event IoC: {config.Indicators.Event?.Count}".Info());
+                WriteLine($"Pipe IoC: {config.Indicators.Pipe?.Count}".Info());
                 WriteLine("");
+
                 BOOL_IsIocFileDescriptorValid = true;
             }
             catch (KeyNotFoundException e)
@@ -181,6 +183,35 @@ namespace Hedera
             lEventLogEntries = null;
             GC.Collect();
         }
+
+        [SupportedOSPlatform("windows")]
+        private static async Task CheckPipe(List<PipeIndicator> lPipeIndicators)
+        {
+            foreach (PipeIndicator pipeIoC in lPipeIndicators)
+            {
+                List<PipeResult> pipeResults = await HederaLib.CheckPipe(pipeIoC);
+
+                if (pipeResults is not null && pipeResults.Count > 0)
+                {
+                    foreach (PipeResult pipeResult in pipeResults)
+                    {
+                        string STRING_OutputTrace = pipeIoC.Type switch
+                        {
+                            "exists" => $"Detected IoC on pipe!\n\tGUID: {pipeIoC.Guid}" +
+                                      $"\n\tPath: {pipeResult.Name}," +
+                                      $"\n\tType: {pipeIoC.Type}\n",
+
+                 
+                            _ => throw new NotImplementedException()
+                        };
+
+                        WriteLine(STRING_OutputTrace.Warning());
+
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Public Functions
@@ -201,8 +232,9 @@ namespace Hedera
                 var CheckFileTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.File != null) CheckFile(deserializedYaml.Indicators.File); });
                 var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
                 var CheckRegistryTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Registry != null) CheckRegistry(deserializedYaml.Indicators.Registry); });
+                var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
 
-                Task.WaitAll(CheckEventTask, CheckFileTask, CheckProcessTask, CheckRegistryTask);
+                Task.WaitAll(CheckEventTask, CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
 
 
 
