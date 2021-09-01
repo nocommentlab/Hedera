@@ -80,6 +80,10 @@ indicators:
       filename: .*
       rule: C:\test\file.yara
       is_recursive: true
+  pipe:
+    - type: exists
+      guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
+      name: ^\\\\\.\\\\pipe\\\\[a-fA-F0-9]{32}$
   process:
     - type: exists
       guid: 21174833-527a-46a9-afdd-eab618180e63

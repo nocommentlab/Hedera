@@ -19,6 +19,7 @@ namespace ncl.hedera.HederaLib.Helpers
     class Utils
     {
         #region Constants
+        private const string NAMEDPIPE_BASE_DIR = @"\\.\\pipe\\";
         #endregion
 
         #region Members
@@ -56,8 +57,8 @@ namespace ncl.hedera.HederaLib.Helpers
             {
                 peFile = new(STRING_FilePath);
             }
-            catch (Exception){}
-            
+            catch (Exception) { }
+
             STRING_ImpHash = peFile?.ImpHash ?? String.Empty;
 
             return STRING_ImpHash;
@@ -76,13 +77,25 @@ namespace ncl.hedera.HederaLib.Helpers
                 yaraResults.Add(new YaraResult
                 {
                     RuleIdentifier = results[0].MatchingRule.Identifier,
-
-
                 });
             }
 
             return yaraResults;
         }
+
+        public static List<string> CheckNamedPipeExists(string STRING_Pipe)
+        {
+            List<string> lNamedPipesFound = null;
+
+            List<string> lNamedPipeExists = Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
+            lNamedPipesFound = lNamedPipeExists.Where(STRING_NamedPipe => Regex.IsMatch(STRING_NamedPipe, STRING_Pipe)).ToList();
+
+            
+            return lNamedPipesFound;
+        }
+
+
+
         /// <summary>
         /// Retrieves the 
         /// </summary>
