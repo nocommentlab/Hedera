@@ -65,31 +65,33 @@ namespace Hedera
         {
             foreach (RegistryIndicator registryIoC in lRegistryIndicator)
             {
-                RegistryKeyResult registryKeyResult = await HederaLib.CheckRegistryKey(registryIoC);
+                List<RegistryKeyResult> lRegistryKeyResult = await HederaLib.CheckRegistryKey(registryIoC);
 
-
-                if ((registryKeyResult is not null) && (registryKeyResult.Result))
+                foreach (RegistryKeyResult registryKeyResult in lRegistryKeyResult)
                 {
-                    string STRING_OutputTrace = registryIoC.Type switch
+                    if ((registryKeyResult is not null) && (registryKeyResult.Result))
                     {
-                        "exists" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}" + 
-                                              $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
-                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{ registryIoC.ValueNameRegex}]," +
-                                              $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}," +
-                                              $"\n\tType: {registryIoC.Type}\n",
+                        string STRING_OutputTrace = registryIoC.Type switch
+                        {
+                            "exists" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}" +
+                                                  $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                                                  $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{ registryIoC.ValueNameRegex}]," +
+                                                  $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}," +
+                                                  $"\n\tType: {registryIoC.Type}\n",
 
-                        "data_value_regex" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}"+
-                                              $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
-                                              $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{registryIoC.ValueNameRegex}]," +
-                                              $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}[{registryIoC.ValueDataRegex}]," +
-                                              $"\n\tType: {registryIoC.Type}\n",
-                        _ => throw new NotImplementedException()
-                    };
+                            "data_value_regex" => $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}" +
+                                                  $"\n\tKey: {registryKeyResult.RegistryItem.STRING_Name}," +
+                                                  $"\n\tData Name: {registryKeyResult.RegistryItem.STRING_ValueName}[{registryIoC.ValueNameRegex}]," +
+                                                  $"\n\tData Value: {registryKeyResult.RegistryItem.OBJECT_ValueData}[{registryIoC.ValueDataRegex}]," +
+                                                  $"\n\tType: {registryIoC.Type}\n",
 
-                    WriteLine(STRING_OutputTrace.Warning());
+                            _ => throw new NotImplementedException()
+                        };
 
+                        WriteLine(STRING_OutputTrace.Warning());
+
+                    }
                 }
-
             }
 
         }

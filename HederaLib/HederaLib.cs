@@ -66,7 +66,7 @@ namespace ncl.hedera.HederaLib
                 var deserializer = new DeserializerBuilder()
                                    .WithNamingConvention(UnderscoredNamingConvention.Instance)
                                    .Build();
-                
+
                 CONFIG_HederaConfiguration = deserializer.Deserialize<Config>(File.ReadAllText(STRING_IocFile));
             }
             catch (Exception ex)
@@ -83,36 +83,45 @@ namespace ncl.hedera.HederaLib
         /// <param name="OBJECT_RegistryIoC">The Registry IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static Task<RegistryKeyResult> CheckRegistryKey(RegistryIndicator registryIoc)
+        public static Task<List<RegistryKeyResult>> CheckRegistryKey(RegistryIndicator registryIoc)
         {
 
+            List<RegistryKeyResult> lRegistryKeyResult = null;
             RegistryKeyResult registryKeyResult = null;
 
             registryIoc.Key = Utils.ReplaceTemplate(registryIoc.Key);
             // Extracts the registry data value
-            RegistryItem OBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(registryIoc);
+            List<RegistryItem> lOBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(registryIoc);
 
-            if (null != OBJECT_ExtractedDataValue)
+            if (null != lOBJECT_ExtractedDataValue)
             {
 
-                registryKeyResult = new();
+                lRegistryKeyResult = new();
 
-                registryKeyResult.Result = registryIoc.Type switch
+                foreach (RegistryItem item in lOBJECT_ExtractedDataValue)
                 {
-                    "exists" => (OBJECT_ExtractedDataValue != null),
-                    "data_value_regex" => ((null != OBJECT_ExtractedDataValue) &&
-                                            Regex.IsMatch(OBJECT_ExtractedDataValue.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
-                    _ => false
-                };
+                    registryKeyResult = new();
+                    registryKeyResult.Result = registryIoc.Type switch
+                    {
+                        "exists" => (item != null),
+                        "data_value_regex" => ((null != item) &&
+                                                Regex.IsMatch(item.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
+                        _ => false
+                    };
 
-                registryKeyResult.RegistryItem = OBJECT_ExtractedDataValue;
+                    registryKeyResult.RegistryItem = item;
 
-                registryKeyResult.GUID_ResultId = Guid.NewGuid();
-                registryKeyResult.Hostname = Dns.GetHostName();
-                registryKeyResult.DATETIME_Datetime = DateTime.Now;
+                    registryKeyResult.GUID_ResultId = Guid.NewGuid();
+                    registryKeyResult.Hostname = Dns.GetHostName();
+                    registryKeyResult.DATETIME_Datetime = DateTime.Now;
+
+                    lRegistryKeyResult.Add(registryKeyResult);
+                }
+
             }
 
-            return Task.FromResult<RegistryKeyResult>(registryKeyResult);
+            return Task.FromResult(lRegistryKeyResult);
+            //return Task.FromResult<RegistryKeyResult>(registryKeyResult);
         }
 
         /// <summary>
@@ -127,7 +136,7 @@ namespace ncl.hedera.HederaLib
             List<FileResult> lFileResult = null;
             List<FileItem> lFileItem;
 
-            
+
             fileIoc.Path = Utils.ReplaceTemplate(fileIoc.Path);
 
             lFileItem = Utils.IsFileExists(fileIoc);
