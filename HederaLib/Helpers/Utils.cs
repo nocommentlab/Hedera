@@ -90,7 +90,7 @@ namespace ncl.hedera.HederaLib.Helpers
             List<string> lNamedPipeExists = Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
             lNamedPipesFound = lNamedPipeExists.Where(STRING_NamedPipe => Regex.IsMatch(STRING_NamedPipe, STRING_Pipe)).ToList();
 
-            
+
             return lNamedPipesFound;
         }
 
@@ -136,9 +136,10 @@ namespace ncl.hedera.HederaLib.Helpers
         /// <param name="OBJECT_RegistryIoC">The dynamic RegistryIoC object reads from yaml file</param>
         /// <returns>The registry data value, otherwise null</returns>
         [SupportedOSPlatform("windows")]
-        public static RegistryItem ReadRegistryDataValue(RegistryIndicator registryIoc)
+        public static List<RegistryItem> ReadRegistryDataValue(RegistryIndicator registryIoc)
         {
             RegistryItem registryItem = null;
+            List<RegistryItem> lRegistryItem = null;
 
             RegistryKey REGISTRY_RegistryKey;
 
@@ -147,31 +148,40 @@ namespace ncl.hedera.HederaLib.Helpers
             if (null != REGISTRYKEY_BaseRegistry)
             {
                 REGISTRY_RegistryKey = REGISTRYKEY_BaseRegistry.OpenSubKey(registryIoc.Key);
+                
                 if (null != REGISTRY_RegistryKey)
                 {
                     if (registryIoc.IsRecursive)
                         SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref registryItem);
                     else
                     {
-                        string STRING_ValueName = REGISTRY_RegistryKey.GetValueNames().ToList<string>()
-                                                .FirstOrDefault(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex));
-                        if (STRING_ValueName != null)
+                        
+                        List<string> lSTRING_ValueNames = REGISTRY_RegistryKey.GetValueNames()
+                                                          .Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex))
+                                                          .ToList();
+                        
+                        if (lSTRING_ValueNames.Count > 0)
                         {
-                            registryItem = new RegistryItem
+                            lRegistryItem = new();
+
+                            foreach (string STRING_ValueName in lSTRING_ValueNames)
                             {
-                                STRING_Name = REGISTRY_RegistryKey.Name,
-
-                                STRING_ValueName = STRING_ValueName,
-                                OBJECT_ValueData = REGISTRY_RegistryKey.GetValue(STRING_ValueName)
-                            };
+                                if (STRING_ValueName != null)
+                                {
+                                    lRegistryItem.Add(registryItem = new RegistryItem
+                                    {
+                                        STRING_Name = REGISTRY_RegistryKey.Name,
+                                        STRING_ValueName = STRING_ValueName,
+                                        OBJECT_ValueData = REGISTRY_RegistryKey.GetValue(STRING_ValueName)
+                                    });
+                                }
+                            }
                         }
-
                     }
-
                 }
             }
 
-            return registryItem;
+            return lRegistryItem;
         }
 
         /// <summary>
