@@ -1,0 +1,37 @@
+---
+information:
+  guid: a224d312-c61e-4f45-ae85-9fc102e49e66
+  author: Antonio Blescia
+  date: 2022/03/02
+  modified: 2021/03/02
+  status: experimental
+  description: |
+    Detect RDP configuration used by Conti Gang
+    Conti gang changes the RDP service listening port to 1350 and creates the relative firewall rules.
+    Thanks to Conti gang leaks
+indicators:
+  registry:
+    # Detects inbound rule for 1350 TCP RDP port used by Conti Gang
+    - type: data_value_regex
+      guid: 16a97688-3df8-4e02-bce8-778d982d3e32
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules'
+      value_name_regex: ^{[A-Za-z0-9]{8}-([A-Za-z0-9]{4}-){3}[A-Za-z0-9]{12}}$
+      value_data_regex: \|Action=Allow\|Active=TRUE\|Dir=In\|Protocol=6\|LPort=1350\|Name=New RDP Port 1350\|$
+      is_recursive: false
+    # Detects inbound rule for 1350 UDP RDP port used by Conti Gang
+    - type: data_value_regex
+      guid: 2a20bba7-abeb-43a1-9ec8-dfd8e8673081
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules'
+      value_name_regex:  ^{[A-Za-z0-9]{8}-([A-Za-z0-9]{4}-){3}[A-Za-z0-9]{12}}$
+      value_data_regex: \|Action=Allow\|Active=TRUE\|Dir=In\|Protocol=17\|LPort=1350\|Name=New RDP Port 1350\|$
+      is_recursive: false
+    # Detects the listening RDP port sets to 1350
+    - type: data_value_regex
+      guid: 246a5aef-4716-4f09-bcc6-2b46db62a8c7
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp'
+      value_name_regex:  ^PortNumber$
+      value_data_regex: 1350
+      is_recursive: false
