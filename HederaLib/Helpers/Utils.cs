@@ -148,39 +148,36 @@ namespace ncl.hedera.HederaLib.Helpers
             if (null != REGISTRYKEY_BaseRegistry)
             {
                 REGISTRY_RegistryKey = REGISTRYKEY_BaseRegistry.OpenSubKey(registryIoc.Key);
+                
                 if (null != REGISTRY_RegistryKey)
                 {
                     if (registryIoc.IsRecursive)
                         SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref registryItem);
                     else
                     {
-                        //TODO: Gestire la ricorsivita'
-
-                        //string STRING_ValueName = REGISTRY_RegistryKey.GetValueNames().ToList<string>()
-                        //                        .FirstOrDefault(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex));
-
-                        List<string> lSTRING_ValueNames = REGISTRY_RegistryKey.GetValueNames().Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex)).ToList();
+                        
+                        List<string> lSTRING_ValueNames = REGISTRY_RegistryKey.GetValueNames()
+                                                          .Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex))
+                                                          .ToList();
+                        
                         if (lSTRING_ValueNames.Count > 0)
                         {
                             lRegistryItem = new();
 
-                            foreach (string element in lSTRING_ValueNames)
+                            foreach (string STRING_ValueName in lSTRING_ValueNames)
                             {
-                                if (element != null)
+                                if (STRING_ValueName != null)
                                 {
                                     lRegistryItem.Add(registryItem = new RegistryItem
                                     {
                                         STRING_Name = REGISTRY_RegistryKey.Name,
-
-                                        STRING_ValueName = element,
-                                        OBJECT_ValueData = REGISTRY_RegistryKey.GetValue(element)
+                                        STRING_ValueName = STRING_ValueName,
+                                        OBJECT_ValueData = REGISTRY_RegistryKey.GetValue(STRING_ValueName)
                                     });
                                 }
                             }
                         }
-
                     }
-
                 }
             }
 

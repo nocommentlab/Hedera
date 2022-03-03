@@ -90,6 +90,7 @@ namespace ncl.hedera.HederaLib
             RegistryKeyResult registryKeyResult = null;
 
             registryIoc.Key = Utils.ReplaceTemplate(registryIoc.Key);
+            
             // Extracts the registry data value
             List<RegistryItem> lOBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(registryIoc);
 
@@ -121,7 +122,7 @@ namespace ncl.hedera.HederaLib
             }
 
             return Task.FromResult(lRegistryKeyResult);
-            //return Task.FromResult<RegistryKeyResult>(registryKeyResult);
+            
         }
 
         /// <summary>
