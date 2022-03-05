@@ -28,6 +28,7 @@ indicators:
       value_data_regex: 0
       is_recursive: false
   file:
+    # Detects that AnyDesk application exists
     - type: exists
       guid: 28344a67-de13-4221-bf0e-a497a59a8ded
       path: C:\ProgramData\AnyDesk.exe
