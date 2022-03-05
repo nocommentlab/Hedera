@@ -148,18 +148,21 @@ namespace ncl.hedera.HederaLib.Helpers
             if (null != REGISTRYKEY_BaseRegistry)
             {
                 REGISTRY_RegistryKey = REGISTRYKEY_BaseRegistry.OpenSubKey(registryIoc.Key);
-                
+
                 if (null != REGISTRY_RegistryKey)
                 {
                     if (registryIoc.IsRecursive)
-                        SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref registryItem);
+                    {
+                        SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref lRegistryItem);
+                        
+                    }
                     else
                     {
-                        
+
                         List<string> lSTRING_ValueNames = REGISTRY_RegistryKey.GetValueNames()
                                                           .Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex))
                                                           .ToList();
-                        
+
                         if (lSTRING_ValueNames.Count > 0)
                         {
                             lRegistryItem = new();
@@ -168,7 +171,7 @@ namespace ncl.hedera.HederaLib.Helpers
                             {
                                 if (STRING_ValueName != null)
                                 {
-                                    lRegistryItem.Add(registryItem = new RegistryItem
+                                    lRegistryItem.Add(new RegistryItem
                                     {
                                         STRING_Name = REGISTRY_RegistryKey.Name,
                                         STRING_ValueName = STRING_ValueName,
@@ -271,42 +274,53 @@ namespace ncl.hedera.HederaLib.Helpers
         /// <param name="STRING_SearchedValue">The searched key value</param>
         /// <param name="registryItem">The result of search: true if exists, otherwise false</param>
         [SupportedOSPlatform("windows")]
-        private static void SearchSubKeys(RegistryKey REGISTRYKEY_RootKey, String STRING_SearchedValue, ref RegistryItem registryItem)
+        private static void SearchSubKeys(RegistryKey REGISTRYKEY_RootKey, String STRING_SearchedValue, ref List<RegistryItem> lRegistryItem)
         {
+
+            RegistryItem registryItem = null;
             string[] vSTRING_Subkeys = REGISTRYKEY_RootKey.GetSubKeyNames();
             int INT32_Idx = 0;
-            while (INT32_Idx < vSTRING_Subkeys.Length && registryItem == null)
+
+            if (vSTRING_Subkeys.Length > 0 )
             {
-                try
+                lRegistryItem = new();
+
+                while (INT32_Idx < vSTRING_Subkeys.Length)
                 {
-                    using (RegistryKey REGISTRYKEY_Key = REGISTRYKEY_RootKey.OpenSubKey(vSTRING_Subkeys[INT32_Idx]))
+                    try
                     {
-                        try
+                        using (RegistryKey REGISTRYKEY_Key = REGISTRYKEY_RootKey.OpenSubKey(vSTRING_Subkeys[INT32_Idx]))
                         {
-
-                            if (REGISTRYKEY_Key.GetValueNames().Where(valueName => Regex.IsMatch(valueName, STRING_SearchedValue)).Any())
+                            try
                             {
-                                registryItem = new RegistryItem
-                                {
-                                    STRING_Name = REGISTRYKEY_Key.Name,
-                                    STRING_ValueName = REGISTRYKEY_Key.GetValueNames().Where(valueName => Regex.IsMatch(valueName, STRING_SearchedValue)).First()
-                                };
-                                registryItem.OBJECT_ValueData = REGISTRYKEY_Key.GetValue(registryItem.STRING_ValueName);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
 
-                        SearchSubKeys(REGISTRYKEY_Key, STRING_SearchedValue, ref registryItem);
+                                if (REGISTRYKEY_Key.GetValueNames().Where(valueName => Regex.IsMatch(valueName, STRING_SearchedValue)).Any())
+                                {
+                                    registryItem = new RegistryItem
+                                    {
+                                        STRING_Name = REGISTRYKEY_Key.Name,
+                                        STRING_ValueName = REGISTRYKEY_Key.GetValueNames().Where(valueName => Regex.IsMatch(valueName, STRING_SearchedValue)).First()
+                                    };
+                                    registryItem.OBJECT_ValueData = REGISTRYKEY_Key.GetValue(registryItem.STRING_ValueName);
+                                    
+                                    lRegistryItem.Add(registryItem);
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+
+                            SearchSubKeys(REGISTRYKEY_Key, STRING_SearchedValue, ref lRegistryItem);
+                        }
                     }
+                    catch (System.Security.SecurityException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    INT32_Idx++;
                 }
-                catch (System.Security.SecurityException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                INT32_Idx++;
             }
 
         }
