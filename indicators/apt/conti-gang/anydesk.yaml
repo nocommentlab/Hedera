@@ -1,0 +1,35 @@
+﻿---
+information:
+  guid: 7d8db1fb-e0e4-47d8-9cd4-d3debb0cae2e
+  author: Antonio Blescia
+  date: 2022/03/04
+  modified: 2021/03/04
+  status: experimental
+  description: |
+    Detect persistance with new user oldadministrator
+    Conti gang creates a new user named oldadministrator and add it to local Administrators group.
+    After, this new user is set as hidden user and it is used to access through AnyDesk
+indicators:
+  registry:
+    # Detects the new oldadministrator account used for persistance
+    - type: data_value_regex
+      guid: 7d8db1fb-e0e4-47d8-9cd4-d3debb0cae2e
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList'
+      value_name_regex: ^ProfileImagePath$
+      value_data_regex: ^[a-zA-z:\\]*oldadministrator$
+      is_recursive: true
+    # Detects hidden account named oldadministrator
+    - type: data_value_regex
+      guid: 7d8db1fb-e0e4-47d8-9cd4-d3debb0cae2e
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'Software\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\Userlist'
+      value_name_regex: ^oldadministrator$
+      value_data_regex: 0
+      is_recursive: false
+  file:
+    - type: exists
+      guid: 28344a67-de13-4221-bf0e-a497a59a8ded
+      path: C:\ProgramData\AnyDesk.exe
+      is_recursive: false
+
