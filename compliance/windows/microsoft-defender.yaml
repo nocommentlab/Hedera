@@ -1,0 +1,91 @@
+﻿---
+information:
+  guid: 944d76b9-30ef-4418-b1dc-efe3a49e9713
+  author: Antonio Blescia
+  date: 2022/03/08
+  modified: 2021/03/08
+  status: experimental
+  description: |
+    Compliance IDBF file for Microsoft Defender. 
+    For Ransomware Protection, Signature Update, PUA Protection, Isolated browsing, Exploit Protection and Reputation-based protection see the below links
+    - https://0ut3r.space/2022/03/06/windows-defender/
+    - https://www.microsoft.com/en-us/download/details.aspx?id=25250
+indicators:
+  registry:
+    # Detects Join Microsoft MAPS.
+    # This policy setting allows you to join Microsoft MAPS. Microsoft MAPS is the online community that helps you choose how to respond to potential threats. 
+    # The community also helps stop the spread of new malicious software infections.
+    # (0x0) Disabled (default)
+    # (0x1) Basic membership
+    # (0x2) Advanced membership
+    - type: data_value_regex
+      guid: 12ed2cec-a668-44df-b010-6b80e8f6015e
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\Spynet'
+      value_name_regex: ^SpynetReporting$
+      value_data_regex: 1|2
+      is_recursive: false
+
+    # Detects DisableBlockAtFirstSeen.
+    # This feature ensures the device checks in real time with the Microsoft Active Protection Service (MAPS) before allowing certain content to be run or accessed. 
+    # If this feature is disabled, the check will not occur, which will lower the protection state of the device.
+    # Enabled: The Block at First Sight setting is turned on.
+    # Disabled: The Block at First Sight setting is turned off.
+    - type: data_value_regex
+      guid: 1aada1fc-c5fd-416b-bf40-1b00db84a49f
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\Spynet'
+      value_name_regex: ^DisableBlockAtFirstSeen$
+      value_data_regex: 0
+      is_recursive: false
+
+    # Detects LocalSettingOverrideSpynetReporting.
+    # This policy setting configures a local override for the configuration to join Microsoft MAPS. This setting can only be set by Group Policy.
+    # 0 Disabled
+    # 1 Enabled
+    - type: data_value_regex
+      guid: dcf9311d-afbe-486a-9148-50c6e7e077be
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\Spynet'
+      value_name_regex: ^LocalSettingOverrideSpynetReporting$
+      value_data_regex: 1
+      is_recursive: false
+
+    # Detects SubmitSamplesConsent.  
+    # (0x0) Always prompt
+    # (0x1) Send safe samples automatically
+    # (0x2) Never send
+    # (0x3) Send all samples automatically
+    - type: data_value_regex
+      guid: 800e38a0-dde4-4891-95c5-e4431096bdfb
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\Spynet'
+      value_name_regex: ^SubmitSamplesConsent$
+      value_data_regex: 1
+      is_recursive: false
+
+    # Detects MpCloudBlockLevel.
+    # (0x0) Default Microsoft Defender Antivirus blocking level
+    # (0x1) Moderate Microsoft Defender Antivirus blocking level, delivers verdict only for high confidence detections
+    # (0x2) High blocking level: aggressively block unknowns while optimizing client performance (greater chance of false positives)
+    # (0x4) High+ blocking level: aggressively block unknowns and apply additional protection measures (may impact  client performance)
+    # (0x6) Zero tolerance blocking level: block all unknown executables
+    - type: data_value_regex
+      guid: 89087a3b-1827-40ae-9570-9b7b5dd0a529
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine'
+      value_name_regex: ^MpCloudBlockLevel$
+      value_data_regex: 2
+      is_recursive: false
+    
+    # Detects MpBafsExtendedTimeout.
+    # This feature allows Microsoft Defender Antivirus to block a suspicious file for up to 60 seconds, 
+    # and scan it in the cloud to make sure it's safe.
+    - type: data_value_regex
+      guid: 01daf42d-f6e2-479a-b50b-93f090c9f29d
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine'
+      value_name_regex: ^MpBafsExtendedTimeout$
+      value_data_regex: 50
+      is_recursive: false
+      
