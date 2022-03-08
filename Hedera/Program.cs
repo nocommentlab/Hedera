@@ -90,7 +90,7 @@ namespace Hedera
                                 _ => throw new NotImplementedException()
                             };
 
-                            WriteLine(STRING_OutputTrace.Warning());
+                            WriteLine(STRING_OutputTrace.Match());
 
                         }
                     }
@@ -137,7 +137,7 @@ namespace Hedera
                             _ => throw new NotImplementedException()
                         };
 
-                        WriteLine(STRING_OutputTrace.Warning());
+                        WriteLine(STRING_OutputTrace.Match());
 
                     }
                 }
@@ -163,7 +163,7 @@ namespace Hedera
                         _ => throw new NotImplementedException()
                     };
 
-                    WriteLine(STRING_OutputTrace.Warning());
+                    WriteLine(STRING_OutputTrace.Match());
                 }
             }
         }
@@ -180,7 +180,7 @@ namespace Hedera
                     WriteLine(($"Detected IoC on event!\n\tGUID: {eventIoC.Guid}" +
                               $"\n\tData: {eventLogEntry.TimeGenerated}," +
                               $"\n\tType: {eventLogEntry.EntryType}," +
-                              $"\n\tMessage: {eventLogEntry.Message}\n").Warning());
+                              $"\n\tMessage: {eventLogEntry.Message}\n").Match());
                 }
                 );
             }
@@ -210,7 +210,7 @@ namespace Hedera
                             _ => throw new NotImplementedException()
                         };
 
-                        WriteLine(STRING_OutputTrace.Warning());
+                        WriteLine(STRING_OutputTrace.Match());
 
                     }
                 }
