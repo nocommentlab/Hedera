@@ -61,33 +61,6 @@ namespace Hedera
         }
 
         [SupportedOSPlatform("windows")]
-        private static async Task CheckRegistry(List<RegistryIndicator> lRegistryIndicator)
-        {
-            foreach (RegistryIndicator registryIoC in lRegistryIndicator)
-            {
-
-                foreach (RegistryKeyResult registryKeyResult in await HederaLib.CheckRegistryKey(registryIoC))
-                {
-
-                    //if ((registryKeyResult is not null) && (registryKeyResult.Result))
-                    if ((registryKeyResult is not null))
-                    {
-                        string STRING_OutputTrace = $"Detected IoC on registry!\n\tGUID: {registryIoC.Guid}" +
-                                                  $"\n\tKey: {registryKeyResult.RegistryItem?.STRING_Name.ToString()}," +
-                                                  $"\n\tData Name: {registryKeyResult.RegistryItem?.STRING_ValueName.ToString()}[{registryIoC.ValueNameRegex}]," +
-                                                  $"\n\tData Value: {registryKeyResult.RegistryItem?.OBJECT_ValueData}[{registryIoC.ValueDataRegex?.ToString()}]," +
-                                                  $"\n\tType: {registryIoC.Type}\n";
-
-                        WriteLine(STRING_OutputTrace.Match());
-
-                    }
-                }
-
-            }
-
-        }
-
-        [SupportedOSPlatform("windows")]
         private static async Task CheckFile(List<FileIndicator> lFileIndicators)
         {
             foreach (FileIndicator fileIoC in lFileIndicators)
@@ -220,14 +193,13 @@ namespace Hedera
             // Checks if the file has the correct structure and print its summary
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
+                var CheckRegistryTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Registry != null) HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
+                //var CheckFileTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.File != null) CheckFile(deserializedYaml.Indicators.File); });
+                //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
+                //var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
+                //var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
 
-                var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
-                var CheckFileTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.File != null) CheckFile(deserializedYaml.Indicators.File); });
-                var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
-                var CheckRegistryTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Registry != null) CheckRegistry(deserializedYaml.Indicators.Registry); });
-                var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
-
-                Task.WaitAll(CheckEventTask, CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
+                Task.WaitAll(/*CheckEventTask*/ /*CheckFileTask*/ /*CheckProcessTask*/ CheckRegistryTask /*CheckPipeTask*/);
 
 
 

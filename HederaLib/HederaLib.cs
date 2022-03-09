@@ -77,6 +77,27 @@ namespace ncl.hedera.HederaLib
 
         }
 
+
+        [SupportedOSPlatform("windows")]
+        public static async Task CheckRegistryIndicators(List<RegistryIndicator> lRegistryIndicator)
+        {
+            List<RegistryKeyResult> registryKeyResults = new();
+
+            foreach (RegistryIndicator registryIoC in lRegistryIndicator)
+            {
+                foreach (RegistryKeyResult registryKeyResult in await CheckRegistryKey(registryIoC))
+                {
+                    if (registryKeyResult is not null)
+                    {
+                       registryKeyResults.Add(registryKeyResult);
+                    }
+                }
+
+            }
+
+            OutputManager.WriteRegistryEvidenciesResult(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE);
+        }
+
         /// <summary>
         /// Checks the registry IoC
         /// </summary>
@@ -232,6 +253,7 @@ namespace ncl.hedera.HederaLib
 
             return Task.FromResult(lPipeResult);
         }
+        
         /// <summary>
         /// Checks the process IoC
         /// </summary>
