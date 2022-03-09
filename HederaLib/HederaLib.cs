@@ -90,39 +90,49 @@ namespace ncl.hedera.HederaLib
             RegistryKeyResult registryKeyResult = null;
 
             registryIoc.Key = Utils.ReplaceTemplate(registryIoc.Key);
-            
+
+            lRegistryKeyResult = new();
+
+
             // Extracts the registry data value
             List<RegistryItem> lOBJECT_ExtractedDataValue = Utils.ReadRegistryDataValue(registryIoc);
 
-            if (null != lOBJECT_ExtractedDataValue)
+            if (null != lOBJECT_ExtractedDataValue && lOBJECT_ExtractedDataValue.Count > 0)
             {
-
-                lRegistryKeyResult = new();
-
-                foreach (RegistryItem item in lOBJECT_ExtractedDataValue)
+                foreach (RegistryItem registryItem in lOBJECT_ExtractedDataValue)
                 {
-                    registryKeyResult = new();
-                    registryKeyResult.Result = registryIoc.Type switch
+
+                    lRegistryKeyResult.Add(new RegistryKeyResult()
                     {
-                        "exists" => (item != null),
-                        "data_value_regex" => ((null != item) &&
-                                                Regex.IsMatch(item.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
-                        _ => false
-                    };
+                        Result = registryIoc.Type switch
+                        {
+                            "exists" => (registryItem != null),
+                            "data_value_regex" => ((null != registryItem) &&
+                                                    Regex.IsMatch(registryItem.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
+                            _ => false
+                        },
 
-                    registryKeyResult.RegistryItem = item;
+                        RegistryItem = registryItem,
+                        RegistryIndicator = registryIoc
+                    });
 
-                    registryKeyResult.GUID_ResultId = Guid.NewGuid();
-                    registryKeyResult.Hostname = Dns.GetHostName();
-                    registryKeyResult.DATETIME_Datetime = DateTime.Now;
-
-                    lRegistryKeyResult.Add(registryKeyResult);
                 }
 
             }
+            else
+            {
+                registryKeyResult = new();
+                registryKeyResult.RegistryIndicator = registryIoc;
+
+                // Adds the element to the the list when the Registry not exists
+                lRegistryKeyResult.Add(registryKeyResult);
+            }
+
+
+
 
             return Task.FromResult(lRegistryKeyResult);
-            
+
         }
 
         /// <summary>
