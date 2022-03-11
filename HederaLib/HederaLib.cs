@@ -89,7 +89,7 @@ namespace ncl.hedera.HederaLib
                 {
                     if (registryKeyResult is not null)
                     {
-                       registryKeyResults.Add(registryKeyResult);
+                        registryKeyResults.Add(registryKeyResult);
                     }
                 }
 
@@ -98,6 +98,24 @@ namespace ncl.hedera.HederaLib
             OutputManager.WriteRegistryEvidenciesResult(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE);
         }
 
+        [SupportedOSPlatform("windows")]
+        public static async Task CheckFileIndicators(List<FileIndicator> lFileIndicator)
+        {
+            List<FileResult> fileResults = new();
+
+            foreach (FileIndicator fileIoC in lFileIndicator)
+            {
+                foreach (FileResult fileResult in await CheckFile(fileIoC))
+                {
+                    if (null != fileResult)
+                    {
+                        fileResults.Add(fileResult);
+                    }
+                }
+            }
+
+            // Add OutputManager
+        }
         /// <summary>
         /// Checks the registry IoC
         /// </summary>
@@ -165,17 +183,20 @@ namespace ncl.hedera.HederaLib
         public static Task<List<FileResult>> CheckFile(FileIndicator fileIoc)
         {
             bool BOOL_TempResult;
+
             List<FileResult> lFileResult = null;
             List<FileItem> lFileItem;
 
+
+            lFileResult = new();
 
             fileIoc.Path = Utils.ReplaceTemplate(fileIoc.Path);
 
             lFileItem = Utils.IsFileExists(fileIoc);
 
-            if (null != lFileItem)
+            if (null != lFileItem && lFileItem.Count > 0)
             {
-                lFileResult = new();
+                
 
                 foreach (FileItem fileItem in lFileItem)
                 {
@@ -188,19 +209,21 @@ namespace ncl.hedera.HederaLib
                         _ => false
                     };
 
-                    if (true == BOOL_TempResult)
-                    {
-                        lFileResult.Add(new FileResult
-                        {
-                            Result = true,
-                            FileItem = fileItem,
-                            GUID_ResultId = Guid.NewGuid(),
-                            Hostname = Dns.GetHostName(),
-                            DATETIME_Datetime = DateTime.Now
-                        });
 
-                    }
+                    lFileResult.Add(new FileResult
+                    {
+                        Result = BOOL_TempResult,
+                        FileItem = fileItem,
+                        FileIndicator = fileIoc
+
+                    });
                 }
+
+            }
+            else /* If the file doesn't exist, add only the FileIndicator */
+            {
+
+                lFileResult.Add(new FileResult() {FileIndicator = fileIoc  });
 
             }
 
@@ -253,7 +276,7 @@ namespace ncl.hedera.HederaLib
 
             return Task.FromResult(lPipeResult);
         }
-        
+
         /// <summary>
         /// Checks the process IoC
         /// </summary>

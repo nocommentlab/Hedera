@@ -193,13 +193,13 @@ namespace Hedera
             // Checks if the file has the correct structure and print its summary
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
-                var CheckRegistryTask = Task.Factory.StartNew(async delegate { if (deserializedYaml.Indicators.Registry != null)  await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
-                //var CheckFileTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.File != null) CheckFile(deserializedYaml.Indicators.File); });
+                var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
+                var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
                 //var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
                 //var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
 
-                Task.WaitAll(/*CheckEventTask*/ /*CheckFileTask*/ /*CheckProcessTask*/ CheckRegistryTask /*CheckPipeTask*/);
+                Task.WaitAll(/*CheckEventTask*/ CheckFileTask /*CheckProcessTask*/ /*CheckRegistryTask*/ /*CheckPipeTask*/);
 
 
 
