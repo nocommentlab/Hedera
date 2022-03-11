@@ -99,10 +99,34 @@ namespace ncl.hedera.HederaLib
 
         }
 
+        
+        [SupportedOSPlatform("windows")]
+        public static async Task CheckPipeIndicators(List<PipeIndicator> lPipeIndicators)
+        {
+            List<PipeResult> lPipeResults = new();
+
+
+
+            foreach (PipeIndicator pipeIoC in lPipeIndicators)
+            {
+                List<PipeResult> pipeResults = await CheckPipe(pipeIoC);
+
+                if (pipeResults is not null && pipeResults.Count > 0)
+                {
+                    foreach (PipeResult pipeResult in pipeResults)
+                    {
+                        lPipeResults.Add(pipeResult);
+                    }
+                }
+            }
+            OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+        }
+
+
         [SupportedOSPlatform("windows")]
         public static async Task CheckFileIndicators(List<FileIndicator> lFileIndicator)
         {
-            List<FileResult> fileResults = new();
+            List<FileResult> lfileResults = new();
 
             foreach (FileIndicator fileIoC in lFileIndicator)
             {
@@ -110,13 +134,14 @@ namespace ncl.hedera.HederaLib
                 {
                     if (null != fileResult)
                     {
-                        fileResults.Add(fileResult);
+                        lfileResults.Add(fileResult);
                     }
                 }
             }
 
-            OutputManager.WriteEvidenciesResult<FileResult>(fileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+            OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
         }
+
 
         /// <summary>
         /// Checks the registry IoC
@@ -186,7 +211,7 @@ namespace ncl.hedera.HederaLib
         {
             bool BOOL_TempResult;
 
-            List<FileResult> lFileResult = null;
+            List<FileResult> lFileResult;
             List<FileItem> lFileItem;
 
 
@@ -236,7 +261,7 @@ namespace ncl.hedera.HederaLib
         /// <summary>
         /// Checks the file IoC
         /// </summary>
-        /// <param name="OBJECT_FileIoC">The File IoC object</param>
+        /// <param name="OBJECT_FileIoC">The Pipe IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
         public static Task<List<PipeResult>> CheckPipe(PipeIndicator pipeIoC)
@@ -266,14 +291,16 @@ namespace ncl.hedera.HederaLib
                         {
                             Result = true,
                             Name = namedPipe,
-                            GUID_ResultId = Guid.NewGuid(),
-                            Hostname = Dns.GetHostName(),
-                            DATETIME_Datetime = DateTime.Now
+                            PipeIndicator = pipeIoC
+                            
                         });
 
                     }
                 }
-
+            }
+            else
+            {
+                lPipeResult.Add(new PipeResult { PipeIndicator = pipeIoC });
             }
 
             return Task.FromResult(lPipeResult);

@@ -51,7 +51,7 @@ function Get-HederaLogUI
 
         [Alias("Type")]
         [Parameter(Mandatory, Position=1)]
-        [ValidateSet('registry','file')]
+        [ValidateSet('registry','file','pipe')]
         [String] $LogType
     )
     
@@ -84,6 +84,15 @@ function Get-HederaLogUI
                     @{ Name = 'Yara Rule'; Expression = { $_.FileIndicator.Rule } },
                     @{ Name = 'Path'; Expression = { $_.FileItem.STRING_Path } }
                    
+                )
+
+                pipe = [array] @(
+                    @{ Name = 'DateTime'; Expression = { $_.DATETIME_Datetime } }, 
+                    @{ Name = 'Result'; Expression = { $_.Result } }, 
+                    @{ Name = 'GUID'; Expression = { $_.PipeIndicator.Guid } }, 
+                    @{ Name = 'Type'; Expression = { $_.PipeIndicator.Type } },
+                    @{ Name = 'NameRegex'; Expression = { $_.PipeIndicator.Name } },
+                    @{ Name = 'Name'; Expression = { $_.Name } }
                 )
         }
     }

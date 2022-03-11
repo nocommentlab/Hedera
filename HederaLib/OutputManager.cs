@@ -17,6 +17,7 @@ namespace ncl.hedera.HederaLib
         #region Costants
         public const string __REGISTRY_OUTPUT__ = "registry_evidences.json";
         public const string __FILE_OUTPUT__ = "file_evidences.json";
+        public const string __PIPE_OUTPUT__ = "pipe_evidences.json";
         #endregion
 
         public enum OUTPUT_MODE
