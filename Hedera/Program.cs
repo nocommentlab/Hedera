@@ -129,12 +129,12 @@ namespace Hedera
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
                 var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
-                //var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
+                var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
                 var CheckPipeTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Pipe != null) await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe); });
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
                 //var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
 
-                Task.WaitAll(/*CheckEventTask*/ /*CheckFileTask,*/ /*CheckProcessTask*/ CheckRegistryTask, CheckPipeTask);
+                Task.WaitAll(/*CheckEventTask*/ CheckFileTask, /*CheckProcessTask*/ CheckRegistryTask, CheckPipeTask);
 
 
                 

@@ -285,7 +285,6 @@ namespace ncl.hedera.HederaLib
                         _ => false
                     };
 
-
                     lPipeResult.Add(new PipeResult
                     {
                         Result = BOOL_TempResult,
@@ -293,7 +292,6 @@ namespace ncl.hedera.HederaLib
                         PipeIndicator = pipeIoC
 
                     });
-
 
                 }
             }
