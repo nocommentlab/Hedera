@@ -99,7 +99,7 @@ namespace ncl.hedera.HederaLib
 
         }
 
-        
+
         [SupportedOSPlatform("windows")]
         public static async Task CheckPipeIndicators(List<PipeIndicator> lPipeIndicators)
         {
@@ -223,7 +223,7 @@ namespace ncl.hedera.HederaLib
 
             if (null != lFileItem && lFileItem.Count > 0)
             {
-                
+
 
                 foreach (FileItem fileItem in lFileItem)
                 {
@@ -250,7 +250,7 @@ namespace ncl.hedera.HederaLib
             else /* If the file doesn't exist, add only the FileIndicator */
             {
 
-                lFileResult.Add(new FileResult() {FileIndicator = fileIoc  });
+                lFileResult.Add(new FileResult() { FileIndicator = fileIoc });
 
             }
 
@@ -271,7 +271,7 @@ namespace ncl.hedera.HederaLib
             List<string> lNamedPipe;
 
 
-            lNamedPipe = Utils.CheckNamedPipeExists(pipeIoC.Name);
+            lNamedPipe = Utils.GetSystemNamedPipes();
 
             if (null != lNamedPipe)
             {
@@ -281,21 +281,20 @@ namespace ncl.hedera.HederaLib
                 {
                     BOOL_TempResult = pipeIoC.Type switch
                     {
-                        "exists" => true,
+                        "exists" => Regex.IsMatch(namedPipe, pipeIoC.Name),
                         _ => false
                     };
 
-                    if (true == BOOL_TempResult)
-                    {
-                        lPipeResult.Add(new PipeResult
-                        {
-                            Result = true,
-                            Name = namedPipe,
-                            PipeIndicator = pipeIoC
-                            
-                        });
 
-                    }
+                    lPipeResult.Add(new PipeResult
+                    {
+                        Result = BOOL_TempResult,
+                        Name = namedPipe,
+                        PipeIndicator = pipeIoC
+
+                    });
+
+
                 }
             }
             else
