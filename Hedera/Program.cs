@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using static System.Console;
 
@@ -60,51 +61,7 @@ namespace Hedera
             return BOOL_IsIocFileDescriptorValid;
         }
 
-        [SupportedOSPlatform("windows")]
-        private static async Task CheckFile(List<FileIndicator> lFileIndicators)
-        {
-            foreach (FileIndicator fileIoC in lFileIndicators)
-            {
-                List<FileResult> fileResults = await HederaLib.CheckFile(fileIoC);
-
-                if (fileResults is not null && fileResults.Count > 0)
-                {
-                    foreach (FileResult fileResult in fileResults)
-                    {
-                        string STRING_OutputTrace = fileIoC.Type switch
-                        {
-                            "exists" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
-                                      $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                      $"\n\tType: {fileIoC.Type}\n",
-
-                            "hash" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
-                                    $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                    $"\n\tType: {fileIoC.Type}," +
-                                    $"\n\tSHA256 HASH: {fileIoC.Sha256Hash}\n",
-
-                            "imphash" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
-                                        $"\n\tPath: {fileResult.FileItem.STRING_Path}," +
-                                        $"\n\tType: {fileIoC.Type}," +
-                                        $"\n\tIMPHASH: {fileIoC.Value}\n",
-
-                            "yara" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
-                                     $"\n\tPath: { fileResult.FileItem.STRING_Path}," +
-                                     $"\n\tType: { fileIoC.Type}\n",
-
-                            "exists_regex" => $"Detected IoC on file!\n\tGUID: {fileIoC.Guid}" +
-                                             $"\n\tPath: { fileResult.FileItem.STRING_Path}," +
-                                             $"\n\tType: { fileIoC.Type}," +
-                                             $"\n\tregex: { fileIoC.Filename}\n",
-                            _ => throw new NotImplementedException()
-                        };
-
-                        WriteLine(STRING_OutputTrace.Match());
-
-                    }
-                }
-            }
-        }
-
+        
         private static async Task CheckProcess(List<ProcessIndicator> lProcessIndicators)
         {
             foreach (ProcessIndicator processIoC in lProcessIndicators)
@@ -195,14 +152,14 @@ namespace Hedera
             {
                 var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
                 var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
+                //var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
                 //var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
-                //var CheckPipeTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Pipe != null) CheckPipe(deserializedYaml.Indicators.Pipe); });
 
-                Task.WaitAll(/*CheckEventTask*/ CheckFileTask /*CheckProcessTask*/ /*CheckRegistryTask*/ /*CheckPipeTask*/);
-
+                Task.WaitAll(/*CheckEventTask*/ CheckFileTask, /*CheckProcessTask*/ CheckRegistryTask /*CheckPipeTask*/);
 
 
+                
                 WriteLine("Scan Finished!".Info());
             }
 

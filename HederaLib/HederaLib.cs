@@ -95,7 +95,8 @@ namespace ncl.hedera.HederaLib
 
             }
 
-            OutputManager.WriteRegistryEvidenciesResult(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE);
+            OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
+
         }
 
         [SupportedOSPlatform("windows")]
@@ -114,8 +115,9 @@ namespace ncl.hedera.HederaLib
                 }
             }
 
-            // Add OutputManager
+            OutputManager.WriteEvidenciesResult<FileResult>(fileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
         }
+
         /// <summary>
         /// Checks the registry IoC
         /// </summary>

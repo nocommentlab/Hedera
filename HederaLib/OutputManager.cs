@@ -15,7 +15,8 @@ namespace ncl.hedera.HederaLib
     public class OutputManager
     {
         #region Costants
-        private const string __REGISTRY_OUTPUT__ = "registry_evidence.json";
+        public const string __REGISTRY_OUTPUT__ = "registry_evidences.json";
+        public const string __FILE_OUTPUT__ = "file_evidences.json";
         #endregion
 
         public enum OUTPUT_MODE
@@ -28,25 +29,31 @@ namespace ncl.hedera.HederaLib
         public OUTPUT_MODE outputMode = OUTPUT_MODE.TO_STDOUT;
 
 
-        public static void WriteRegistryEvidenciesResult(List<RegistryKeyResult> lRegistryKeyResult, OUTPUT_MODE outputMode)
+        public static void WriteEvidenciesResult<T>(List<T> lResult, 
+                                                    OUTPUT_MODE outputMode, 
+                                                    string STRING_Path = null)
         {
-            // To parse the output using Out-GridView. I know, it is PowerShell :)
-            // $(Get - Content.\registry_evidence.json | ConvertFrom - Json)  |
-            // Select - Object @{ Name = 'DateTime'; Expression = { $_.DATETIME_Datetime } }, 
-            //   @{ Name = 'Result'; Expression = { $_.Result } }, 
-            //   @{ Name = 'GUID'; Expression = { $_.RegistryIndicator.Guid } }, 
-            //   @{ Name = 'Type'; Expression = { $_.RegistryIndicator.Type } }, 
-            //   @{ Name = 'BaseKey'; Expression = { $_.RegistryIndicator.BaseKey } }, 
-            //   @{ Name = 'Key'; Expression = { $_.RegistryIndicator.Key } }, 
-            //   @{ Name = 'Key Path'; Expression = { $_.RegistryItem.STRING_Name } }, 
-            //   @{ Name = 'ValueNameRegEx'; Expression = { $_.RegistryIndicator.ValueNameRegex } },
-            //   @{ Name = 'ValueName'; Expression = { $_.RegistryItem.STRING_ValueName } }, 
-            //   @{ Name = 'ValueDataRegEx'; Expression = { $_.RegistryIndicator.ValueDataRegex } },
-            //   @{ Name = 'ValueData'; Expression = { $_.RegistryItem.STRING_ValueData } } |
-            // Out - GridView
 
-            File.WriteAllText(__REGISTRY_OUTPUT__, JsonSerializer.Serialize(lRegistryKeyResult));
+            switch (outputMode)
+            {
+                case OUTPUT_MODE.TO_STDOUT:
+                    break;
+                case OUTPUT_MODE.TO_FILE:
+                    if (STRING_Path is not null)
+                        File.WriteAllText(STRING_Path, JsonSerializer.Serialize(lResult));
+
+                    else
+                        throw new ArgumentNullException(STRING_Path);
+                    break;
+
+                case OUTPUT_MODE.TO_TCP:
+                    break;
+                default:
+                    break;
+            }
         }
+
+        
 
 
     }
