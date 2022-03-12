@@ -109,17 +109,32 @@ namespace ncl.hedera.HederaLib
 
             foreach (PipeIndicator pipeIoC in lPipeIndicators)
             {
-                List<PipeResult> pipeResults = await CheckPipe(pipeIoC);
 
-                if (pipeResults is not null && pipeResults.Count > 0)
+                foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
                 {
-                    foreach (PipeResult pipeResult in pipeResults)
-                    {
-                        lPipeResults.Add(pipeResult);
-                    }
+                    lPipeResults.Add(pipeResult);
                 }
+
             }
             OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static async Task CheckProcessIndicators(List<ProcessIndicator> lProcessIndicators)
+        {
+            List<ProcessResult> lProcessResults = new();
+
+            foreach (ProcessIndicator processIoC in lProcessIndicators)
+            {
+
+                foreach (ProcessResult processResult in await CheckProcess(processIoC))
+                {
+                    lProcessResults.Add(processResult);
+                }
+
+            }
+
+            OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
         }
 
 
@@ -149,7 +164,7 @@ namespace ncl.hedera.HederaLib
         /// <param name="OBJECT_RegistryIoC">The Registry IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static Task<List<RegistryKeyResult>> CheckRegistryKey(RegistryIndicator registryIoc)
+        private static Task<List<RegistryKeyResult>> CheckRegistryKey(RegistryIndicator registryIoc)
         {
 
             List<RegistryKeyResult> lRegistryKeyResult = null;
@@ -207,7 +222,7 @@ namespace ncl.hedera.HederaLib
         /// <param name="OBJECT_FileIoC">The File IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static Task<List<FileResult>> CheckFile(FileIndicator fileIoc)
+        private static Task<List<FileResult>> CheckFile(FileIndicator fileIoc)
         {
             bool BOOL_TempResult;
 
@@ -264,10 +279,10 @@ namespace ncl.hedera.HederaLib
         /// <param name="OBJECT_FileIoC">The Pipe IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
         [SupportedOSPlatform("windows")]
-        public static Task<List<PipeResult>> CheckPipe(PipeIndicator pipeIoC)
+        private static Task<List<PipeResult>> CheckPipe(PipeIndicator pipeIoC)
         {
             bool BOOL_TempResult;
-            List<PipeResult> lPipeResult = null;
+            List<PipeResult> lPipeResult = new();
             List<string> lNamedPipe;
 
 
@@ -275,8 +290,6 @@ namespace ncl.hedera.HederaLib
 
             if (null != lNamedPipe)
             {
-                lPipeResult = new();
-
                 foreach (string namedPipe in lNamedPipe)
                 {
                     BOOL_TempResult = pipeIoC.Type switch
@@ -308,16 +321,43 @@ namespace ncl.hedera.HederaLib
         /// </summary>
         /// <param name="OBJECT_ProcessIoC">The Process IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
-        public static Task<bool> CheckProcess(ProcessIndicator processIoc)
+        private static Task<List<ProcessResult>> CheckProcess(ProcessIndicator processIoc)
         {
             bool BOOL_CheckResult = false;
-            BOOL_CheckResult = processIoc.Type switch
+
+            List<System.Diagnostics.Process> lProcesses = null;
+            List<ProcessResult> lProcessResult = new();
+
+            lProcesses = Helpers.Process.GetAccessibleProcesses().ToList();
+
+            if (null != lProcesses && lProcesses.Count > 0)
             {
-                "exists" => Helpers.Process.GetAccessibleProcesses().Where(process => process.MainModule.ModuleName.Equals(processIoc.Name)).Any(),
-                "hash" => Helpers.Process.GetProcessByExecutableName(processIoc.Name).Where(process => string.Compare(Helpers.Utils.CalculateSha256Hash(process.MainModule.FileName), processIoc.Sha256Hash, true) == 0).Any(),
-                _ => false,
-            };
-            return Task.FromResult<bool>(BOOL_CheckResult);
+                foreach (System.Diagnostics.Process process in lProcesses)
+                {
+                    BOOL_CheckResult = processIoc.Type switch
+                    {
+                        "exists" => process.MainModule.ModuleName.Equals(processIoc.Name),
+                        "hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoc.Sha256Hash, true) == 0,               
+                        _ => false,
+                    };
+
+                    lProcessResult.Add(new ProcessResult
+                    {
+                        Result = BOOL_CheckResult,
+                        Name = process.ProcessName,
+                        ProcessIndicator = processIoc
+
+                    });
+                }
+
+            }
+            else
+            {
+                lProcessResult.Add(new ProcessResult { ProcessIndicator = processIoc });
+            }
+
+
+            return Task.FromResult(lProcessResult);
         }
 
         [SupportedOSPlatform("windows")]

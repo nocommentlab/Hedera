@@ -44,7 +44,7 @@ function Get-HederaLogUI
 
         [Alias("Type")]
         [Parameter(Mandatory, Position=1)]
-        [ValidateSet('registry','file','pipe')]
+        [ValidateSet('registry','file','pipe','process')]
         [String] $LogType
     )
     
@@ -86,6 +86,17 @@ function Get-HederaLogUI
                     @{ Name = 'Type'; Expression = { $_.PipeIndicator.Type } },
                     @{ Name = 'NameRegex'; Expression = { $_.PipeIndicator.Name } },
                     @{ Name = 'Name'; Expression = { $_.Name } }
+                )
+
+                process = [array] @(
+                    @{ Name = 'DateTime'; Expression = { $_.DATETIME_Datetime } }, 
+                    @{ Name = 'Result'; Expression = { $_.Result } }, 
+                    @{ Name = 'GUID'; Expression = { $_.ProcessIndicator.Guid } }, 
+                    @{ Name = 'Type'; Expression = { $_.ProcessIndicator.Type } },
+                    @{ Name = 'Name'; Expression = { $_.ProcessIndicator.Name } }, 
+                    @{ Name = 'Sha256'; Expression = { $_.ProcessIndicator.Sha256Hash } },
+
+                    @{ Name = 'ProcessName'; Expression = { $_.Name } }
                 )
         }
     }

@@ -11,7 +11,11 @@ information:
     riga 2
     riga 3
 indicators:
-  pipe:
+  process:
     - type: exists
-      guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
-      name: ^\\\\\.\\\\pipe\\\\[a-fA-F0-9]{32}$
+      guid: 21174833-527a-46a9-afdd-eab618180e63
+      name: svchost.exe
+    - type: hash
+      guid: f099098d-3831-4bdf-9304-9e14194cd0a1
+      name: Calculator.exe
+      sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769

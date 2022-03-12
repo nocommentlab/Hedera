@@ -61,30 +61,30 @@ namespace Hedera
             return BOOL_IsIocFileDescriptorValid;
         }
 
-        
-        private static async Task CheckProcess(List<ProcessIndicator> lProcessIndicators)
-        {
-            foreach (ProcessIndicator processIoC in lProcessIndicators)
-            {
-                bool? BOOL_Result = await HederaLib.CheckProcess(processIoC);
-                if (true == BOOL_Result)
-                {
-                    string STRING_OutputTrace = processIoC.Type switch
-                    {
-                        "exists" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
-                                    $"\n\tName: {processIoC.Name}," +
-                                    $"\n\tType: {processIoC.Type}\n",
-                        "hash" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
-                                  $"\n\tName: {processIoC.Name}," +
-                                  $"\n\tType: {processIoC.Type}," +
-                                  $"\n\tSHA256 HASH: {processIoC.Sha256Hash}\n",
-                        _ => throw new NotImplementedException()
-                    };
+        //[SupportedOSPlatform("windows")]
+        //private static async Task CheckProcess(List<ProcessIndicator> lProcessIndicators)
+        //{
+        //    foreach (ProcessIndicator processIoC in lProcessIndicators)
+        //    {
+        //        bool? BOOL_Result = await HederaLib.CheckProcess(processIoC);
+        //        if (true == BOOL_Result)
+        //        {
+        //            string STRING_OutputTrace = processIoC.Type switch
+        //            {
+        //                "exists" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
+        //                            $"\n\tName: {processIoC.Name}," +
+        //                            $"\n\tType: {processIoC.Type}\n",
+        //                "hash" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
+        //                          $"\n\tName: {processIoC.Name}," +
+        //                          $"\n\tType: {processIoC.Type}," +
+        //                          $"\n\tSHA256 HASH: {processIoC.Sha256Hash}\n",
+        //                _ => throw new NotImplementedException()
+        //            };
 
-                    WriteLine(STRING_OutputTrace.Match());
-                }
-            }
-        }
+        //            WriteLine(STRING_OutputTrace.Match());
+        //        }
+        //    }
+        //}
 
         [SupportedOSPlatform("windows")]
         private static async Task CheckEvent(List<EventIndicator> lEventIndicators)
@@ -107,11 +107,7 @@ namespace Hedera
             GC.Collect();
         }
 
-        [SupportedOSPlatform("windows")]
-        private static async Task CheckPipe(List<PipeIndicator> lPipeIndicators)
-        {
-            
-        }
+
 
         #endregion
 
@@ -131,10 +127,11 @@ namespace Hedera
                 var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
                 var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
                 var CheckPipeTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Pipe != null) await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe); });
+                var CheckProcessTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Process != null) await HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process); });
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
-                //var CheckProcessTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Process != null) CheckProcess(deserializedYaml.Indicators.Process); });
 
-                Task.WaitAll(/*CheckEventTask*/ CheckFileTask, /*CheckProcessTask*/ CheckRegistryTask, CheckPipeTask);
+
+                Task.WaitAll(/*CheckEventTask*/ CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
 
 
                 

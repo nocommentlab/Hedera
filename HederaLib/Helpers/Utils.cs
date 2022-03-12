@@ -83,6 +83,8 @@ namespace ncl.hedera.HederaLib.Helpers
             return yaraResults;
         }
 
+        
+
         public static List<string> GetSystemNamedPipes()
         {
             return Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
