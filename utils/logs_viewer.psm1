@@ -73,9 +73,10 @@ function Get-HederaLogUI
                     @{ Name = 'Type'; Expression = { $_.FileIndicator.Type } },
                     @{ Name = 'Sha256'; Expression = { $_.FileIndicator.Sha256Hash } },
                     @{ Name = 'IMPHASH'; Expression = { $_.FileIndicator.Value } },
-                    @{ Name = 'FileName'; Expression = { $_.FileIndicator.FileName } },
+                    @{ Name = 'Path'; Expression = { $_.FileIndicator.Path } },
+                    @{ Name = 'FileName'; Expression = { $_.FileIndicator.Filename } },
                     @{ Name = 'Yara Rule'; Expression = { $_.FileIndicator.Rule } },
-                    @{ Name = 'Path'; Expression = { $_.FileItem.STRING_Path } }
+                    @{ Name = 'Detected Path'; Expression = { $_.FileItem.STRING_Path } }
                    
                 )
 
