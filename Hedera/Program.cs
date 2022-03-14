@@ -61,38 +61,14 @@ namespace Hedera
             return BOOL_IsIocFileDescriptorValid;
         }
 
-        //[SupportedOSPlatform("windows")]
-        //private static async Task CheckProcess(List<ProcessIndicator> lProcessIndicators)
-        //{
-        //    foreach (ProcessIndicator processIoC in lProcessIndicators)
-        //    {
-        //        bool? BOOL_Result = await HederaLib.CheckProcess(processIoC);
-        //        if (true == BOOL_Result)
-        //        {
-        //            string STRING_OutputTrace = processIoC.Type switch
-        //            {
-        //                "exists" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
-        //                            $"\n\tName: {processIoC.Name}," +
-        //                            $"\n\tType: {processIoC.Type}\n",
-        //                "hash" => $"Detected IoC on process!\n\tGUID: {processIoC.Guid}" +
-        //                          $"\n\tName: {processIoC.Name}," +
-        //                          $"\n\tType: {processIoC.Type}," +
-        //                          $"\n\tSHA256 HASH: {processIoC.Sha256Hash}\n",
-        //                _ => throw new NotImplementedException()
-        //            };
-
-        //            WriteLine(STRING_OutputTrace.Match());
-        //        }
-        //    }
-        //}
-
+        [Obsolete("WARNING: TO BE REWRITEN!!")]
         [SupportedOSPlatform("windows")]
         private static async Task CheckEvent(List<EventIndicator> lEventIndicators)
         {
             List<EventLogEntry> lEventLogEntries = null;
             foreach (EventIndicator eventIoC in lEventIndicators)
             {
-                bool? BOOL_Result = await HederaLib.CheckEvent(eventIoC, ref lEventLogEntries);
+                //bool? BOOL_Result = await HederaLib.CheckEvent(eventIoC, ref lEventLogEntries);
                 lEventLogEntries?.ForEach(eventLogEntry =>
                 {
                     WriteLine(($"Detected IoC on event!\n\tGUID: {eventIoC.Guid}" +
@@ -131,7 +107,7 @@ namespace Hedera
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
 
 
-                Task.WaitAll(/*CheckEventTask*/ CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
+                Task.WaitAll(CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
 
 
                 

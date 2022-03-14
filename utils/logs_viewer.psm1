@@ -63,7 +63,7 @@ function Get-HederaLogUI
                     @{ Name = 'ValueDataRegEx'; Expression = { $_.RegistryIndicator.ValueDataRegex } },
                     @{ Name = 'Key Path'; Expression = { $_.RegistryItem.STRING_Name } },
                     @{ Name = 'ValueName'; Expression = { $_.RegistryItem.STRING_ValueName } }, 
-                    @{ Name = 'ValueData'; Expression = { $_.RegistryItem.STRING_ValueData } }
+                    @{ Name = 'ValueData'; Expression = { $_.RegistryItem.OBJECT_ValueData } }
                 )
 
                 file = [array] @(

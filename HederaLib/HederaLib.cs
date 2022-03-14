@@ -157,6 +157,7 @@ namespace ncl.hedera.HederaLib
             OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
         }
 
+        
 
         /// <summary>
         /// Checks the registry IoC
@@ -360,8 +361,9 @@ namespace ncl.hedera.HederaLib
             return Task.FromResult(lProcessResult);
         }
 
+        [Obsolete("WARNING: TO BE REWRITEN!!")]
         [SupportedOSPlatform("windows")]
-        public static Task<bool> CheckEvent(dynamic OBJECT_EventIoC, ref List<EventLogEntry> lEventLogEntries)
+        private static Task<bool> CheckEvent(dynamic OBJECT_EventIoC, ref List<EventLogEntry> lEventLogEntries)
         {
             bool BOOL_CheckResult = true;
             EventLog remoteEventLogs;
