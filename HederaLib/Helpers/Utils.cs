@@ -83,16 +83,23 @@ namespace ncl.hedera.HederaLib.Helpers
             return yaraResults;
         }
 
-        public static List<string> CheckNamedPipeExists(string STRING_Pipe)
+        
+
+        public static List<string> GetSystemNamedPipes()
+        {
+            return Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
+        }
+
+        /*public static List<string> CheckNamedPipeExists(string STRING_Pipe)
         {
             List<string> lNamedPipesFound = null;
 
-            List<string> lNamedPipeExists = Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
+            List<string> lNamedPipeExists = 
             lNamedPipesFound = lNamedPipeExists.Where(STRING_NamedPipe => Regex.IsMatch(STRING_NamedPipe, STRING_Pipe)).ToList();
 
 
             return lNamedPipesFound;
-        }
+        }*/
 
 
 

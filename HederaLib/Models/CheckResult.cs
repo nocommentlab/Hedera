@@ -14,5 +14,7 @@ namespace ncl.hedera.HederaLib.Models
         public string Hostname { get; set; }
         public bool Result { get; set; }
         #endregion
+
+        
     }
 }

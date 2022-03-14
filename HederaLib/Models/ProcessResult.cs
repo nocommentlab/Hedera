@@ -4,26 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ncl.hedera.HederaLib.Models
 {
-    public class RegistryKeyResult : CheckResult, ISerializable
+    public class ProcessResult : CheckResult
     {
-        public RegistryItem RegistryItem { get; set; }
-        public RegistryIndicator RegistryIndicator { get; set; }
+        //public FileItem FileItem { get; set; }
+        public string Name { get; set; }
+        public ProcessIndicator ProcessIndicator { get; set; }
 
-        public RegistryKeyResult()
+        public ProcessResult()
         {
             this.GUID_ResultId = Guid.NewGuid();
             this.Hostname = Dns.GetHostName();
             this.DATETIME_Datetime = DateTime.Now;
         }
 
-        public string ToJson()
-        {
-            return JsonSerializer.Serialize(this);
-        }
     }
 }

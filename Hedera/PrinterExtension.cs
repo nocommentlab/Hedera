@@ -24,5 +24,10 @@ namespace Hedera
         {
             return $"{"[WARN]".Pastel(Color.Blue).PastelBg("FF9800")} - {STRING_Message}";
         }
+
+        public static string Match(this string STRING_Message)
+        {
+            return $"{"[MATCH]".Pastel(Color.Blue).PastelBg("FF9800")} - {STRING_Message}";
+        }
     }
 }

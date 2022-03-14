@@ -92,15 +92,15 @@ indicators:
       guid: f099098d-3831-4bdf-9304-9e14194cd0a1
       name: Calculator.exe
       sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769
-  event:
-    - type: exists
-      guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a
-      channel: security
-      id: 4672
-    - type: exists
-      guid: 20b43436-ef85-44a8-8566-dca85a3b3855
-      channel: application
-      id: 1001
-      datetime_start: 15/12/2020 00:00:00
-      datetime_end: 15/12/2020 23:59:00
-      datetime_format: dd/MM/yyyy HH:mm:ss
+  #event:
+  #  - type: exists
+  #    guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a
+  #    channel: security
+  #    id: 4672
+  #  - type: exists
+  #    guid: 20b43436-ef85-44a8-8566-dca85a3b3855
+  #    channel: application
+  #    id: 1001
+  #    datetime_start: 15/12/2020 00:00:00
+  #    datetime_end: 15/12/2020 23:59:00
+  #    datetime_format: dd/MM/yyyy HH:mm:ss
