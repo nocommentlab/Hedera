@@ -11,87 +11,12 @@ information:
     riga 2
     riga 3
 indicators:
-  registry:
-    - type: exists
-      guid: 16a97688-3df8-4e02-bce8-778d982d3e32
-      base_key: HKEY_USERS
-      key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows'
-      value_name_regex: ^IsMRUEstablishedd?$
-      is_recursive: false
-    - type: data_value_regex
-      guid: 904de9b0-a4d7-4e39-8fd2-754324a4d29b
-      base_key: HKEY_USERS
-      key: '{{sid}}\Software\Microsoft\Windows NT'
-      value_name_regex: ^Device$
-      value_data_regex: ^Microsoft.*$
-      is_recursive: true
-    - type: data_value_regex
-      guid: 38753352-3072-47ca-b8cc-652151c3d065
-      base_key: HKEY_USERS
-      key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion'
-      value_name_regex: ^LegacyDefaultPrinterMode$
-      value_data_regex: ^0$
-      is_recursive: false
-  file:
-    - type: exists
-      guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
-      path: C:\Program Files\Mozilla Firefox\firefox.exe
-      is_recursive: false
-    - type: exists
-      guid: 42d17885-ce39-4b8b-a542-ac4751eaabc5
-      path: C:\Users\{{user}}
-      filename: ^file\.exe$
-      is_recursive: true
-    - type: exists
-      guid: af8fe480-d92a-4cd4-a488-5ad1913b514a
-      path: C:\Users\antonio.blescia\subfolder11
-      filename: file.exe
-      is_recursive: true
-    - type: exists
-      guid: bf4be4ef-a90f-40fa-b0ba-bda49b96fe47
-      path: C:\Users\antonio.blescia\subfolder11
-      filename: ^[0-9]\w*\.exe$
-      is_recursive: true
-    - type: hash
-      guid: 22560d93-197b-4488-8d6e-a780a2ae5067
-      path: C:\Program Files\Mozilla Firefox\firefox.exe
-      sha256_hash: F98155B06D845E3218949E8BD959DA4741FFCD2736F963A11C7BCB7230460279
-      is_recursive: false
-    - type: hash
-      guid: 07114ca5-d93c-47e3-abae-954fa23842a6
-      path: C:\Program Files\Mozilla Firefox
-      filename: ^firefox\.exe$
-      sha256_hash: F98155B06D845E3218949E8BD959DA4741FFCD2736F963A11C7BCB7230460279
-      is_recursive: true
-    - type: imphash
-      guid: 53c88a83-33b8-49e5-b309-71cea51b8357
-      path: C:\Program Files
-      filename: .*
-      value: C483AB042998E5D3F9AC1D5A7C7ABDB2
-      is_recursive: true
-    - type: yara
-      guid: 9e001cdd-5928-4c27-be33-c3dab057207c
-      path: C:\test\documento.txt
-      rule: C:\test\file.yara
-      is_recursive: false
-    - type: yara
-      guid: c8dc388e-642c-4911-a7d7-c33fe7750baa
-      path: C:\test
-      filename: .*
-      rule: C:\test\file.yara
-      is_recursive: true
-  pipe:
-    - type: exists
-      guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
-      name: ^\\\\\.\\\\pipe\\\\[a-fA-F0-9]{32}$
   process:
-    - type: exists
-      guid: 21174833-527a-46a9-afdd-eab618180e63
-      name: Calculator.exe
-    - type: hash
+    - type: memory
       guid: f099098d-3831-4bdf-9304-9e14194cd0a1
-      name: Calculator.exe
-      sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769
+      name: ^notepad.exe$
+      rule: C:\test\file.yara
+
   #event:
   #  - type: exists
   #    guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a
