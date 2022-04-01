@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "08644d9a-c36f-4dc2-902a-d93646665b63",
+		"name": "TheHive Hedera Intefacing Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Cases",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Create Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add TTP to Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add New Observable type",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Registry Observable to Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add File Observable to Case(with attachment)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "lx9RWX4B1+CrsHkZqlqDMVUkIcspfEJE",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
