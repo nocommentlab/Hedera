@@ -10,5 +10,7 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     {
         public string Name { get; init; }
         public string Sha256Hash { get; set; }
+
+        public string Rule { get; set; }
     }
 }

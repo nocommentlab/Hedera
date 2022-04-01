@@ -64,24 +64,7 @@ namespace ncl.hedera.HederaLib.Helpers
             return STRING_ImpHash;
         }
 
-        public static List<YaraResult> VerifyYaraRule(string STRING_FilePath, string STRING_YaraRule)
-        {
-            List<YaraResult> yaraResults = null;
-
-            List<ScanResult> results = QuickScan.File(STRING_FilePath, STRING_YaraRule);
-
-            if (results.Any())
-            {
-                yaraResults = new();
-
-                yaraResults.Add(new YaraResult
-                {
-                    RuleIdentifier = results[0].MatchingRule.Identifier,
-                });
-            }
-
-            return yaraResults;
-        }
+        
 
         
 
@@ -90,16 +73,6 @@ namespace ncl.hedera.HederaLib.Helpers
             return Directory.GetFiles(NAMEDPIPE_BASE_DIR).ToList();
         }
 
-        /*public static List<string> CheckNamedPipeExists(string STRING_Pipe)
-        {
-            List<string> lNamedPipesFound = null;
-
-            List<string> lNamedPipeExists = 
-            lNamedPipesFound = lNamedPipeExists.Where(STRING_NamedPipe => Regex.IsMatch(STRING_NamedPipe, STRING_Pipe)).ToList();
-
-
-            return lNamedPipesFound;
-        }*/
 
 
 

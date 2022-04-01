@@ -92,6 +92,10 @@ indicators:
       guid: f099098d-3831-4bdf-9304-9e14194cd0a1
       name: Calculator.exe
       sha256_hash: A29B233954BABDB6DE3FD512E22D0E152D188BCBF74F3B1F3AC9DE450007B769
+    - type: memory
+      guid: f099098d-3831-4bdf-9304-9e14194cd0a1
+      name: ^notepad.exe$
+      rule: C:\test\file.yara
   #event:
   #  - type: exists
   #    guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a

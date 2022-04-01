@@ -157,7 +157,7 @@ namespace ncl.hedera.HederaLib
             OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
         }
 
-        
+
 
         /// <summary>
         /// Checks the registry IoC
@@ -248,7 +248,7 @@ namespace ncl.hedera.HederaLib
                         "exists" => true,
                         "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(fileIoc.Sha256Hash.ToLower()),
                         "imphash" => Utils.CalculateImphash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
-                        "yara" => Utils.VerifyYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule).Count > 0,
+                        "yara" => YaraScanner.VerifyBinTxtYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule).Count > 0,
                         _ => false
                     };
 
@@ -322,23 +322,25 @@ namespace ncl.hedera.HederaLib
         /// </summary>
         /// <param name="OBJECT_ProcessIoC">The Process IoC object</param>
         /// <returns>True if the IoC exists, otherwise false</returns>
-        private static Task<List<ProcessResult>> CheckProcess(ProcessIndicator processIoc)
+        private static Task<List<ProcessResult>> CheckProcess(ProcessIndicator processIoC)
         {
             bool BOOL_CheckResult = false;
 
-            List<System.Diagnostics.Process> lProcesses = null;
+            List<System.Diagnostics.Process> lProcesses;
             List<ProcessResult> lProcessResult = new();
 
-            lProcesses = Helpers.Process.GetAccessibleProcesses().ToList();
+            lProcesses = Helpers.Process.GetAccessibleProcesses(processIoC.Name);
 
             if (null != lProcesses && lProcesses.Count > 0)
             {
                 foreach (System.Diagnostics.Process process in lProcesses)
                 {
-                    BOOL_CheckResult = processIoc.Type switch
+
+                    BOOL_CheckResult = processIoC.Type switch
                     {
-                        "exists" => process.MainModule.ModuleName.Equals(processIoc.Name),
-                        "hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoc.Sha256Hash, true) == 0,               
+                        "exists" => process.MainModule.ModuleName.Equals(processIoC.Name),
+                        "hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoC.Sha256Hash, true) == 0,
+                        "memory" => YaraScanner.VerifyProcessYaraRule(process, processIoC.Rule).Count > 0,
                         _ => false,
                     };
 
@@ -346,15 +348,16 @@ namespace ncl.hedera.HederaLib
                     {
                         Result = BOOL_CheckResult,
                         Name = process.ProcessName,
-                        ProcessIndicator = processIoc
+                        ProcessIndicator = processIoC
 
                     });
+
                 }
 
             }
             else
             {
-                lProcessResult.Add(new ProcessResult { ProcessIndicator = processIoc });
+                lProcessResult.Add(new ProcessResult { ProcessIndicator = processIoC });
             }
 
 

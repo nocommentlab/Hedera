@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ncl.hedera.HederaLib.Helpers
@@ -23,8 +24,9 @@ namespace ncl.hedera.HederaLib.Helpers
         /// Gets the list processes that are accessibile using the user that runs the software
         /// </summary>
         /// <returns></returns>
-        public static System.Diagnostics.Process[] GetAccessibleProcesses()
+        public static List<System.Diagnostics.Process> GetAccessibleProcesses(string STRING_ProcessName)
         {
+
             List<System.Diagnostics.Process> lProcesses = new();
             foreach (System.Diagnostics.Process process in GetProcesses())
             {
@@ -38,7 +40,8 @@ namespace ncl.hedera.HederaLib.Helpers
                 catch (Exception) { }
 
             }
-            return lProcesses.ToArray<System.Diagnostics.Process>();
+            return lProcesses.Where(process => Regex.IsMatch(process.MainModule?.ModuleName, STRING_ProcessName, RegexOptions.IgnoreCase)).ToList();
+            
         }
 
         /// <summary>

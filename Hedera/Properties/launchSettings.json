@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Hedera": {
-      "commandName": "Project",
-      "commandLineArgs": "microsoft-defender.yaml"
+      "commandName": "Project"
     }
   }
 }
