@@ -6,18 +6,20 @@ information:
   modified: 2022/04/09
   status: experimental
   description: |
+    Compliance IDBF file for Microsoft Defender for Endpoint Attack Surface Reduction rules configured using GPO.
+    Attack surface reduction rules (ASR rules) help prevent actions that malware often abuses to compromise devices and networks.
     - https://github.com/scipag/HardeningKitty/blob/c33feeb096c3b06781498c3c187dab0e574df2f3/lists/finding_list_0x6d69636b_machine.csv
     - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/overview-attack-surface-reduction?view=o365-worldwide
     - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction?view=o365-worldwide
     - https://www.windowserver.it/2021/06/attack-surface-reduction-cose-e-come-configurarlo-al-meglio/
-
+    - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#asr-rules-and-guids-matrix
 indicators:
   registry:
     # ASR: Block executable content from email client and webmail (Policy)
     - type: data_value_regex
       guid: 2dba9f0a-9bca-4e3c-a92e-f9620ed43a49
       base_key: HKEY_LOCAL_MACHINE
-      key: 'Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\rules'
+      key: 'Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules'
       value_name_regex: ^be9ba2d9-53ea-4cdc-84e5-9b1eeee46550$
       value_data_regex: 1
       is_recursive: false
@@ -141,4 +143,3 @@ indicators:
       value_name_regex: ^56a863a9-875e-4185-98a7-b882c64b5ce5$
       value_data_regex: 1
       is_recursive: false
-      
