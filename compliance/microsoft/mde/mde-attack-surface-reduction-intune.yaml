@@ -1,0 +1,145 @@
+﻿---
+information:
+  guid: 7813e7ac-130a-4a5b-a46f-ea3a3d2f6bbb
+  author: Antonio Blescia
+  date: 2022/04/11
+  modified: 2022/04/11
+  status: experimental
+  description: |
+    Compliance IDBF file for Microsoft Defender for Endpoint Attack Surface Reduction rules configured using Intune.
+    Attack surface reduction rules (ASR rules) help prevent actions that malware often abuses to compromise devices and networks.
+    - https://github.com/scipag/HardeningKitty/blob/c33feeb096c3b06781498c3c187dab0e574df2f3/lists/finding_list_0x6d69636b_machine.csv
+    - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/overview-attack-surface-reduction?view=o365-worldwide
+    - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction?view=o365-worldwide
+    - https://www.windowserver.it/2021/06/attack-surface-reduction-cose-e-come-configurarlo-al-meglio/
+    - https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules-reference?view=o365-worldwide#asr-rules-and-guids-matrix
+indicators:
+  registry:
+    # ASR: Block executable content from email client and webmail (ASRRules)
+    - type: data_value_regex
+      guid: e32cb949-3018-4a51-a87a-e48c86f34648
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550=1
+      is_recursive: false
+    # ASR: Block Office applications from creating child processes (ASRRules)
+    - type: data_value_regex
+      guid: f1bee9b6-982d-4d7a-a079-10701f88c0a3
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: D4F940AB-401B-4EFC-AADC-AD5F3C50688A=1
+      is_recursive: false
+    # ASR: Block Office applications from creating executable content (ASRRules)
+    - type: data_value_regex
+      guid: 834ab563-c9cb-4e2a-a372-a9a1bb96e99e
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 3B576869-A4EC-4529-8536-B80A7769E899=1
+      is_recursive: false
+    # ASR: Block Office applications from injecting into other processes (ASRRules)
+    - type: data_value_regex
+      guid: 04eaf68f-1a4a-4271-9ec6-2699006f0ca5
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84=1
+      is_recursive: false
+    # ASR: Block JavaScript or VBScript from launching downloaded executable content (ASRRules)
+    - type: data_value_regex
+      guid: 547e948b-33b3-481d-8330-c3f39741d93a
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: D3E037E1-3EB8-44C8-A917-57927947596D=1
+      is_recursive: false
+    # ASR: Block execution of potentially obfuscated scripts (ASRRules)
+    - type: data_value_regex
+      guid: 6c899b46-218c-456c-88e8-4104707bd192
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 5BEB7EFE-FD9A-4556-801D-275E5FFC04CC=1
+      is_recursive: false
+    # ASR: Block Win32 imports from Macro code in Office (ASRRules)
+    - type: data_value_regex
+      guid: 2a2b11f4-a5d7-4f20-81b7-eac9ab47c3d4
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B=1
+      is_recursive: false
+    # ASR: Block executable files from running unless they meet a prevalence, age, or trusted list criteria (ASRRules)
+    - type: data_value_regex
+      guid: 7f37218c-2823-4927-b031-4ae44cf5b5f8
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 01443614-CD74-433A-B99E-2ECDC07BFC25=1
+      is_recursive: false
+    # ASR: Use advanced protection against ransomware (ASRRules)
+    - type: data_value_regex
+      guid: ef846a3f-1bee-4cd6-a072-8af5150daee3
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: C1DB55AB-C21A-4637-BB3F-A12568109D35=1
+      is_recursive: false
+    # ASR: Block credential stealing from the Windows local security authority subsystem (lsass.exe) (ASRRules)
+    - type: data_value_regex
+      guid: a3cd8a04-1fff-40cc-a516-e0f8e7d2f7a2
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 9E6C4E1F-7D60-472F-BA1A-A39EF669E4B2=1
+      is_recursive: false
+    # ASR: Block process creations originating from PSExec and WMI commands (ASRRules)
+    - type: data_value_regex
+      guid: bc6077eb-bae7-497d-9208-3918c682fa49
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: D1E49AAC-8F56-4280-B9BA-993A6D77406C=1
+      is_recursive: false
+    # ASR: Block untrusted and unsigned processes that run from USB (ASRRules)
+    - type: data_value_regex
+      guid: ab298ead-8bf8-48a4-a5e8-3b3b8e8f8ccf
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: B2B3F03D-6A65-4F7B-A9C7-1C7EF74A9BA4=1
+      is_recursive: false
+    # ASR: Block Office communication applications from creating child processes (ASRRules)
+    - type: data_value_regex
+      guid: 0d44ff51-ef16-47b1-bfe2-295c384e0f85
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 26190899-1602-49E8-8B27-EB1D0A1CE869=1
+      is_recursive: false
+    # ASR: Block Adobe Reader from creating child processes (ASRRules)
+    - type: data_value_regex
+      guid: 70c8f99c-6fd3-4b55-a865-6c3228458d77
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 7674BA52-37EB-4A4F-A9A1-F0F9A1619A2C=1
+      is_recursive: false
+    # ASR: Block persistence through WMI event subscription (ASRRules)
+    - type: data_value_regex
+      guid: a8b0c9a3-0c83-4663-b952-6d5a323df537
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: E6DB77E5-3DF2-4CF1-B95A-636979351E5B=1
+      is_recursive: false
+    # ASR: Block abuse of exploited vulnerable signed drivers (ASRRules)
+    - type: data_value_regex
+      guid: a791c161-6572-4aac-b246-91df62a1dabc
+      base_key: HKEY_LOCAL_MACHINE
+      key: 'SOFTWARE\WOW6432Node\Policies\Microsoft\Windows Defender\Policy Manager'
+      value_name_regex: ASRRules 
+      value_data_regex: 56A863A9-875E-4185-98A7-B882C64B5CE5=1
+      is_recursive: false
