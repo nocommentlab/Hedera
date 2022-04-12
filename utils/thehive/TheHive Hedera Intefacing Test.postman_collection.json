@@ -1,15 +1,374 @@
 {
 	"info": {
-		"_postman_id": "08644d9a-c36f-4dc2-902a-d93646665b63",
+		"_postman_id": "ba6384d2-5c63-4992-925a-8b0bc4f89050",
 		"name": "TheHive Hedera Intefacing Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
+			"name": "Get Users",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"query\": [\r\n        {\r\n            \"_name\": \"listOrganisation\"\r\n        },\r\n        {\r\n            \"_name\": \"users\"\r\n        }\r\n\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/query?name=users",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "users"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Admin Password",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"testPassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/user/~16528/password/set",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"~16528",
+						"password",
+						"set"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Hedera orgasation",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"The Hedera Company\",\r\n    \"name\": \"Hedera\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/organisation",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"organisation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Hedera Organisation Admin",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"hedera-scanner\",\r\n    \"name\": \"Hedera Scanner\",\r\n    \"organisation\": \"Hedera\",\r\n    \"profile\": \"org-admin\",\r\n    \"password\": \"h3d3r@\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/user",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Hedera-Scanner API Key",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/user/~4288/key/renew",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"~4288",
+						"key",
+						"renew"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Hedera Organisation Analyst",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{admin_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"hedera-analyst\",\r\n    \"name\": \"Hedera Analyst\",\r\n    \"organisation\": \"Hedera\",\r\n    \"profile\": \"analyst\",\r\n    \"password\": \"@n@ly5t\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/user",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Mitre Att&ck Enterprise Patterns",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "secret",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{admin_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Github/Hedera/utils/thihive/enterprise-attack.txt"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.70:9000/api/v1/pattern/import/attack",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"70"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"pattern",
+						"import",
+						"attack"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Cases",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": ""
+				}
 			},
 			"response": []
 		},
@@ -20,7 +379,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"raw": "{\n    \"status\":\"Open\",\n    \"severity\":2,\n    \"tlp\":2,\n    \"pap\":2,\n    \"startDate\":1649783520000,\n    \"title\":\"mytitle\",\n    \"description\":\"mydescription\",\n    \"tags\":[\"mytag1\",\"mytag2\"],\n    \"tasks\":[]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -28,13 +387,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://192.168.1.64:9000/api/case",
+					"raw": "http://192.168.1.70:9000/api/case",
 					"protocol": "http",
 					"host": [
 						"192",
 						"168",
 						"1",
-						"64"
+						"70"
 					],
 					"port": "9000",
 					"path": [
@@ -52,7 +411,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"raw": "{\n    \"caseId\":\"~4240\",\n    \"tactic\":\"reconnaissance\",\n    \"description\":null,\n    \"patternId\":\"T1589\",\n    \"occurDate\":1649783700000\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -60,7 +419,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://192.168.1.64:9000/api/case",
+					"raw": "http://192.168.1.64:9000/api/v1/procedure",
 					"protocol": "http",
 					"host": [
 						"192",
@@ -71,7 +430,8 @@
 					"port": "9000",
 					"path": [
 						"api",
-						"case"
+						"v1",
+						"procedure"
 					]
 				}
 			},
@@ -80,11 +440,26 @@
 		{
 			"name": "Add New Observable type",
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin@thehive.local",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "secret",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"raw": "{\n    \"name\":\"process\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -92,7 +467,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://192.168.1.64:9000/api/case",
+					"raw": "http://192.168.1.64:9000/api/observable/type",
 					"protocol": "http",
 					"host": [
 						"192",
@@ -103,7 +478,8 @@
 					"port": "9000",
 					"path": [
 						"api",
-						"case"
+						"observable",
+						"type"
 					]
 				}
 			},
@@ -116,7 +492,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"My first case\",\n    \"description\": \"This case has been created by my custom script\"\n    \"tasks\": [{\n        \"title\": \"mytask\",\n        \"description\": \"description of my task\"\n    }],\n    \"customFields\": {\n        \"cvss\": {\n            \"number\": 9,\n        },\n        \"businessImpact\": {\n            \"string\": \"HIGH\"\n        }\n    }\n}",
+					"raw": "{\n    \"dataType\":\"registry\",\n    \"tlp\": 2,\n    \"ioc\": true,\n    \"sighted\": false,\n    \"tags\":[],\n    \"data\": [\n        \"Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Windows\"\n    ],\n    \"message\": \"my first registry observable\"\n\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -175,11 +551,16 @@
 		}
 	],
 	"auth": {
-		"type": "bearer",
-		"bearer": [
+		"type": "basic",
+		"basic": [
 			{
-				"key": "token",
-				"value": "lx9RWX4B1+CrsHkZqlqDMVUkIcspfEJE",
+				"key": "password",
+				"value": "{{hedera-scanner_password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{hedera-scanner}}",
 				"type": "string"
 			}
 		]

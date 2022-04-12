@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.O365.Security.Native.libyara.NET.Core" Version="4.0.4" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="PeNet" Version="2.6.4" />
+    <PackageReference Include="RestSharp" Version="107.3.0" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="YamlDotNet" Version="11.2.1" />
