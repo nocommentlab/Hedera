@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
@@ -112,6 +113,15 @@ namespace ncl.hedera.HederaLib
                         if (registryKeyResult is not null)
                         {
                             registryKeyResults.Add(registryKeyResult);
+
+                            // Sends the result to TheHive
+                            if (null != _theHiveManager)
+                            {
+                                registryIoC.Observable.DataType = "registry";
+                                registryIoC.Observable.Data.Add(JsonSerializer.Serialize(registryKeyResult.RegistryItem));
+                                await _theHiveManager.AddObservableToCase(registryIoC.Observable);
+                            }
+                            
                         }
                     }
 
@@ -140,7 +150,7 @@ namespace ncl.hedera.HederaLib
                 }
                 OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
             }
-        
+
         }
 
         [SupportedOSPlatform("windows")]

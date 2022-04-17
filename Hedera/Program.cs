@@ -92,10 +92,6 @@ namespace Hedera
 
         #region Public Functions
 
-        // https://devblogs.microsoft.com/ifdef-windows/command-line-parser-on-net5/
-        // https://makolyte.com/csharp-parsing-commands-and-arguments-in-a-console-app/
-        // https://codingblog.carterdan.net/2019/04/12/command-line-parser/
-        // https://robertwray.co.uk/blog/using-the-commandlineparser-nuget-package-to-handle-your-command-line
         private static async Task Main(string[] args)
         {
 
@@ -112,7 +108,7 @@ namespace Hedera
             // Deserialize the ioc configuration file
             Config deserializedYaml = HederaLib.DeserializeIoCConfiguration(opts.Idbf);
 
-            // Checks if the TheHive connection property are correctly configured
+            // Checks if the TheHive connection property is correctly configured
             if (opts.Ip != null && opts.ApiKey != null)
             {
                 HederaLib.TheHiveManager = new TheHiveManager(opts.Ip, opts.Port, opts.ApiKey);
@@ -123,17 +119,11 @@ namespace Hedera
             // Checks if the file has the correct structure and print its summary
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
-                //var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
-                //var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
-                //var CheckPipeTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Pipe != null) await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe); });
-                //var CheckProcessTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Process != null) await HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process); });
-                //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
 
-
-                Task.WaitAll(HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File),
-                             HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process),
-                             HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry),
-                             HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe));
+                Task.WaitAll(Task.Factory.StartNew(async () => HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File)),
+                             Task.Factory.StartNew(async () => HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process)),
+                             Task.Factory.StartNew(async()=>HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry)),
+                             Task.Factory.StartNew(async () => HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe)));
 
 
 

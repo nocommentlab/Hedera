@@ -13,13 +13,13 @@ namespace ncl.hedera.HederaLib.Models.TheHive
         public bool Ioc { get; set; }
         public bool Sighted { get; set; }
         public string[] Tags { get; set; }
-        public string[] Data { get; set; }
+        public List<string> Data { get; set; }
         public string Message { get; set; }
 
         public Observable()
         {
             Tags = Array.Empty<string>();
-            Data = Array.Empty<string>();
+            Data = new List<string>();
         }
     }
 }

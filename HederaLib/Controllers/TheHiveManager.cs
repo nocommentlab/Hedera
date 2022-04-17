@@ -22,6 +22,7 @@ namespace ncl.hedera.HederaLib.Controllers
         private string _STRING_TheHiveEndpointAddress;
         private int _INT32_TheHiveEnpointPort;
         private string _STRING_ApiKey;
+        private string _STRING_CaseId;
         #endregion
 
 
@@ -74,7 +75,7 @@ namespace ncl.hedera.HederaLib.Controllers
 
         }
 
-        public async Task<string> CreateCase(Case CASE_NewCase)
+        public async Task CreateCase(Case CASE_NewCase)
         {
 
 
@@ -94,15 +95,16 @@ namespace ncl.hedera.HederaLib.Controllers
 
             JsonObject deserializedResponse = JsonNode.Parse(response.Content).AsObject();
 
-            return deserializedResponse["_id"].ToString();
+            _STRING_CaseId = deserializedResponse["_id"].ToString();
+            //return deserializedResponse["_id"].ToString();
         }
 
-        public async Task<string> AddObservableToCase(Observable OBSERVABLE_ToAdd, string STRING_CaseId)
+        public async Task<string> AddObservableToCase(Observable OBSERVABLE_ToAdd)
         {
 
             string STRING_ObservableId = null;
             string STRING_BaseUrl = $"http://{_STRING_TheHiveEndpointAddress}:{_INT32_TheHiveEnpointPort}{THEHIVE_ENDPOINT_ADD_OBSERVABLE_CASE_FORMAT}";
-            var client = new RestClient(String.Format(STRING_BaseUrl, STRING_CaseId));
+            var client = new RestClient(String.Format(STRING_BaseUrl, _STRING_CaseId));
 
             var request = new RestRequest
             {
@@ -121,7 +123,7 @@ namespace ncl.hedera.HederaLib.Controllers
                 JsonNode deserializedResponse = JsonArray.Parse(response.Content);
                 STRING_ObservableId = deserializedResponse[0].AsObject()["id"].ToString();
             }
-            catch (Exception){ }
+            catch (Exception) { }
 
             return STRING_ObservableId;
         }
@@ -129,7 +131,7 @@ namespace ncl.hedera.HederaLib.Controllers
         public async Task<string> AddProcedureToCase(Procedure PROCEDURE_ToAdd)
         {
 
-            
+
             var client = new RestClient($"http://{_STRING_TheHiveEndpointAddress}:{_INT32_TheHiveEnpointPort}{THEHIVE_ENDPOINT_ADD_TTP_CASE_FORMAT}");
 
             var request = new RestRequest
@@ -139,6 +141,7 @@ namespace ncl.hedera.HederaLib.Controllers
             request.AddHeader("Authorization", $"Bearer {this._STRING_ApiKey}");
             request.AddHeader("Content-Type", "application/json");
 
+            PROCEDURE_ToAdd.CaseId = _STRING_CaseId;
 
             request.AddJsonBody(PROCEDURE_ToAdd);
 
