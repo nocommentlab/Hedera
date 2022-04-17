@@ -1,11 +1,13 @@
-﻿using ncl.hedera.HederaLib;
+﻿using CommandLine;
+using ncl.hedera.HederaLib;
+using ncl.hedera.HederaLib.Controllers;
 using ncl.hedera.HederaLib.Models;
 using ncl.hedera.HederaLib.Models.Configuration;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Versioning;
-using System.Threading;
 using System.Threading.Tasks;
 using static System.Console;
 
@@ -15,11 +17,12 @@ namespace Hedera
     class Program
     {
         #region Costants
-        private const string DEFAULT_CONFIG_FILE = @"ioc.yaml";
+
         #endregion
 
         #region Members
         private static string _STRING_IocFile = String.Empty;
+        private static TheHiveManager _theHiveManager;
         #endregion
 
         #region Properties
@@ -88,33 +91,62 @@ namespace Hedera
         #endregion
 
         #region Public Functions
-        private static void Main(string[] args)
+
+        // https://devblogs.microsoft.com/ifdef-windows/command-line-parser-on-net5/
+        // https://makolyte.com/csharp-parsing-commands-and-arguments-in-a-console-app/
+        // https://codingblog.carterdan.net/2019/04/12/command-line-parser/
+        // https://robertwray.co.uk/blog/using-the-commandlineparser-nuget-package-to-handle-your-command-line
+        private static async Task Main(string[] args)
         {
 
-            // Loads the explicit IoC, otherwise, loads the default 
-            _STRING_IocFile = (args.Length == 0) ? DEFAULT_CONFIG_FILE : args[0];
+            Parser.Default.ParseArguments<CommandLineOptions>(args)
+                .WithParsed(async (opts) => await CommandLineParsingOkCallback(opts))
+                .WithNotParsed((errs) => CommandLineParsingNokCallback(errs));
 
+        }
+        #endregion
+
+        #region Private Functions
+        private static async Task CommandLineParsingOkCallback(CommandLineOptions opts)
+        {
             // Deserialize the ioc configuration file
-            Config deserializedYaml = HederaLib.DeserializeIoCConfiguration(_STRING_IocFile);
+            Config deserializedYaml = HederaLib.DeserializeIoCConfiguration(opts.Idbf);
+
+            // Checks if the TheHive connection property are correctly configured
+            if (opts.Ip != null && opts.ApiKey != null)
+            {
+                HederaLib.TheHiveManager = new TheHiveManager(opts.Ip, opts.Port, opts.ApiKey);
+                await HederaLib.TheHiveCreateCase(deserializedYaml.TheHive.Case);
+                await HederaLib.TheHiveAddProcedures(deserializedYaml.TheHive.Procedures);
+            }
 
             // Checks if the file has the correct structure and print its summary
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
-                var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
-                var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
-                var CheckPipeTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Pipe != null) await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe); });
-                var CheckProcessTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Process != null) await HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process); });
+                //var CheckRegistryTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Registry != null) await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry); });
+                //var CheckFileTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.File != null) await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File); });
+                //var CheckPipeTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Pipe != null) await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe); });
+                //var CheckProcessTask = Task.Factory.StartNew(async () => { if (deserializedYaml.Indicators.Process != null) await HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process); });
                 //var CheckEventTask = Task.Factory.StartNew(() => { if (deserializedYaml.Indicators.Event != null) CheckEvent(deserializedYaml.Indicators.Event); });
 
 
-                Task.WaitAll(CheckFileTask, CheckProcessTask, CheckRegistryTask, CheckPipeTask);
+                Task.WaitAll(HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File),
+                             HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process),
+                             HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry),
+                             HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe));
 
 
-                
+
                 WriteLine("Scan Finished!".Info());
             }
 
             Read();
+
+        }
+
+        private static void CommandLineParsingNokCallback(IEnumerable errs)
+        {
+            Console.WriteLine("Command Line parameters provided were not valid!");
         }
         #endregion
 

@@ -10,6 +10,20 @@ information:
     riga 1
     riga 2
     riga 3
+the_hive:
+  case:
+    title: Test Title 
+    description: Test Description
+    pap: 1
+    tlp: 1
+    severity: 1
+    tags:
+      - tag1
+      - tag2
+  procedures:
+    - tactic: reconnaissance
+      pattern_id: T1589
+      description: this field supports the markdown syntax
 indicators:
   registry:
     - type: exists
@@ -18,6 +32,14 @@ indicators:
       key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows'
       value_name_regex: ^IsMRUEstablishedd?$
       is_recursive: false
+      observable:
+        tlp: 2
+        ioc: true
+        sighted: false
+        tags:
+          - tag1
+          - tag2
+        message: this field supports the markdown syntax
     - type: data_value_regex
       guid: 904de9b0-a4d7-4e39-8fd2-754324a4d29b
       base_key: HKEY_USERS

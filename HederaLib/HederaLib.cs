@@ -1,6 +1,8 @@
-﻿using ncl.hedera.HederaLib.Helpers;
+﻿using ncl.hedera.HederaLib.Controllers;
+using ncl.hedera.HederaLib.Helpers;
 using ncl.hedera.HederaLib.Models;
 using ncl.hedera.HederaLib.Models.Configuration;
+using ncl.hedera.HederaLib.Models.TheHive;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,9 +26,14 @@ namespace ncl.hedera.HederaLib
 
         #region Members
         private readonly string _STRING_IocConfigFile = null;
+        private static TheHiveManager _theHiveManager = null;
         #endregion
 
         #region Properties
+        public static TheHiveManager TheHiveManager
+        {
+            set { _theHiveManager = value; }
+        }
         #endregion
 
         #region Private Functions
@@ -66,7 +73,6 @@ namespace ncl.hedera.HederaLib
                 var deserializer = new DeserializerBuilder()
                                    .WithNamingConvention(UnderscoredNamingConvention.Instance)
                                    .Build();
-
                 CONFIG_HederaConfiguration = deserializer.Deserialize<Config>(File.ReadAllText(STRING_IocFile));
             }
             catch (Exception ex)
@@ -78,25 +84,41 @@ namespace ncl.hedera.HederaLib
         }
 
 
+        public static async Task TheHiveCreateCase(Case theHiveNewCase)
+        {
+            await _theHiveManager.CreateCase(theHiveNewCase);
+        }
+
+        public static async Task TheHiveAddProcedures(List<Procedure> theHiveNewProcedures)
+        {
+            foreach (Procedure procedure in theHiveNewProcedures)
+            {
+                await _theHiveManager.AddProcedureToCase(procedure);
+            }
+
+        }
         [SupportedOSPlatform("windows")]
         public static async Task CheckRegistryIndicators(List<RegistryIndicator> lRegistryIndicator)
         {
             List<RegistryKeyResult> registryKeyResults = new();
 
-            foreach (RegistryIndicator registryIoC in lRegistryIndicator)
+            if (lRegistryIndicator != null)
             {
-                foreach (RegistryKeyResult registryKeyResult in await CheckRegistryKey(registryIoC))
+
+                foreach (RegistryIndicator registryIoC in lRegistryIndicator)
                 {
-                    if (registryKeyResult is not null)
+                    foreach (RegistryKeyResult registryKeyResult in await CheckRegistryKey(registryIoC))
                     {
-                        registryKeyResults.Add(registryKeyResult);
+                        if (registryKeyResult is not null)
+                        {
+                            registryKeyResults.Add(registryKeyResult);
+                        }
                     }
+
                 }
 
+                OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
             }
-
-            OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
-
         }
 
 
@@ -105,18 +127,20 @@ namespace ncl.hedera.HederaLib
         {
             List<PipeResult> lPipeResults = new();
 
-
-
-            foreach (PipeIndicator pipeIoC in lPipeIndicators)
+            if (lPipeIndicators != null)
             {
-
-                foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
+                foreach (PipeIndicator pipeIoC in lPipeIndicators)
                 {
-                    lPipeResults.Add(pipeResult);
-                }
 
+                    foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
+                    {
+                        lPipeResults.Add(pipeResult);
+                    }
+
+                }
+                OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
             }
-            OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+        
         }
 
         [SupportedOSPlatform("windows")]
@@ -124,17 +148,20 @@ namespace ncl.hedera.HederaLib
         {
             List<ProcessResult> lProcessResults = new();
 
-            foreach (ProcessIndicator processIoC in lProcessIndicators)
+            if (lProcessIndicators != null)
             {
-
-                foreach (ProcessResult processResult in await CheckProcess(processIoC))
+                foreach (ProcessIndicator processIoC in lProcessIndicators)
                 {
-                    lProcessResults.Add(processResult);
+
+                    foreach (ProcessResult processResult in await CheckProcess(processIoC))
+                    {
+                        lProcessResults.Add(processResult);
+                    }
+
                 }
 
+                OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
             }
-
-            OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
         }
 
 
@@ -143,18 +170,22 @@ namespace ncl.hedera.HederaLib
         {
             List<FileResult> lfileResults = new();
 
-            foreach (FileIndicator fileIoC in lFileIndicator)
+
+            if (lFileIndicator != null)
             {
-                foreach (FileResult fileResult in await CheckFile(fileIoC))
+                foreach (FileIndicator fileIoC in lFileIndicator)
                 {
-                    if (null != fileResult)
+                    foreach (FileResult fileResult in await CheckFile(fileIoC))
                     {
-                        lfileResults.Add(fileResult);
+                        if (null != fileResult)
+                        {
+                            lfileResults.Add(fileResult);
+                        }
                     }
                 }
-            }
 
-            OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+                OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+            }
         }
 
 

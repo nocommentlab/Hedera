@@ -405,6 +405,38 @@
 			"response": []
 		},
 		{
+			"name": "Add Registry Observable to Case",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dataType\":\"registry\",\n    \"tlp\": 2,\n    \"ioc\": true,\n    \"sighted\": false,\n    \"tags\":[],\n    \"data\": [\n        \"Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Windows\"\n    ],\n    \"message\": \"my first registry observable\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.64:9000/api/case",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"64"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"case"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add TTP to Case",
 			"request": {
 				"method": "POST",
@@ -480,38 +512,6 @@
 						"api",
 						"observable",
 						"type"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Registry Observable to Case",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"dataType\":\"registry\",\n    \"tlp\": 2,\n    \"ioc\": true,\n    \"sighted\": false,\n    \"tags\":[],\n    \"data\": [\n        \"Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Windows\"\n    ],\n    \"message\": \"my first registry observable\"\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://192.168.1.64:9000/api/case",
-					"protocol": "http",
-					"host": [
-						"192",
-						"168",
-						"1",
-						"64"
-					],
-					"port": "9000",
-					"path": [
-						"api",
-						"case"
 					]
 				}
 			},

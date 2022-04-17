@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Hedera": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--idbf C:\\Github\\Hedera\\Hedera\\ioc.yaml"
     }
   }
 }

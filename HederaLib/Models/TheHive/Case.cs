@@ -12,7 +12,7 @@ namespace ncl.hedera.HederaLib.Models.TheHive
         public int Severity { get; set; }
         public int Tlp { get; set; }
         public int Pap { get; set; }
-        public int StartDate { get; set; }
+        public long StartDate { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }
