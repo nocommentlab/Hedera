@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ncl.hedera.HederaLib.Models.TheHive;
+
 
 namespace ncl.hedera.HederaLib.Models.Configuration
 {
@@ -10,5 +7,6 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     {
         public string Type { get; init; }
         public string Guid { get; init; }
+        public Observable Observable { get; set; }
     }
 }

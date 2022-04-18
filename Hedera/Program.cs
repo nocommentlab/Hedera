@@ -21,8 +21,6 @@ namespace Hedera
         #endregion
 
         #region Members
-        private static string _STRING_IocFile = String.Empty;
-        private static TheHiveManager _theHiveManager;
         #endregion
 
         #region Properties
@@ -120,10 +118,10 @@ namespace Hedera
             if (ValidateAndPrintIoCSummary(deserializedYaml))
             {
 
-                Task.WaitAll(Task.Factory.StartNew(async () => HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File)),
-                             Task.Factory.StartNew(async () => HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process)),
-                             Task.Factory.StartNew(async()=>HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry)),
-                             Task.Factory.StartNew(async () => HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe)));
+                Task.WaitAll(Task.Factory.StartNew(function: async () => await HederaLib.CheckFileIndicators(deserializedYaml.Indicators.File)),
+                             Task.Factory.StartNew(function: async () => await  HederaLib.CheckProcessIndicators(deserializedYaml.Indicators.Process)),
+                             Task.Factory.StartNew(function: async () => await HederaLib.CheckRegistryIndicators(deserializedYaml.Indicators.Registry)),
+                             Task.Factory.StartNew(function: async () => await HederaLib.CheckPipeIndicators(deserializedYaml.Indicators.Pipe)));
 
 
 

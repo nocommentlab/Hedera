@@ -12,7 +12,7 @@ information:
     riga 3
 the_hive:
   case:
-    title: Test Title 
+    title: "[{{machine_name}}] - Test Title"
     description: Test Description
     pap: 1
     tlp: 1
