@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Hedera": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--idbf C:\\Github\\Hedera\\Hedera\\ioc.yaml --ip 127.0.0.1 --apikey 1eGgcfMvViggxjNIsEttxe7b4njcoxTu"
     }
   }
 }

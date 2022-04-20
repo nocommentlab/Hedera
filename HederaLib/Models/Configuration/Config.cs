@@ -9,8 +9,9 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     public sealed class Config
     {
         public Information Information { get; init; }
+        public TheHive TheHive { get; init; }
         public Indicator Indicators { get; init; }
 
-       
+
     }
 }

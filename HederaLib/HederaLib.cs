@@ -1,6 +1,8 @@
-﻿using ncl.hedera.HederaLib.Helpers;
+﻿using ncl.hedera.HederaLib.Controllers;
+using ncl.hedera.HederaLib.Helpers;
 using ncl.hedera.HederaLib.Models;
 using ncl.hedera.HederaLib.Models.Configuration;
+using ncl.hedera.HederaLib.Models.TheHive;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
@@ -24,9 +27,14 @@ namespace ncl.hedera.HederaLib
 
         #region Members
         private readonly string _STRING_IocConfigFile = null;
+        private static TheHiveManager _theHiveManager = null;
         #endregion
 
         #region Properties
+        public static TheHiveManager TheHiveManager
+        {
+            set { _theHiveManager = value; }
+        }
         #endregion
 
         #region Private Functions
@@ -66,7 +74,6 @@ namespace ncl.hedera.HederaLib
                 var deserializer = new DeserializerBuilder()
                                    .WithNamingConvention(UnderscoredNamingConvention.Instance)
                                    .Build();
-
                 CONFIG_HederaConfiguration = deserializer.Deserialize<Config>(File.ReadAllText(STRING_IocFile));
             }
             catch (Exception ex)
@@ -78,25 +85,57 @@ namespace ncl.hedera.HederaLib
         }
 
 
+        public static void TheHiveCreateCase(Case theHiveNewCase)
+        {
+            // Replace the machine_name template
+            theHiveNewCase.Title = Utils.ReplaceTemplate(theHiveNewCase.Title);
+            theHiveNewCase.StartDate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            theHiveNewCase.Status = "Open";
+            _theHiveManager.CreateCase(theHiveNewCase).GetAwaiter().GetResult();
+        }
+
+        public static void TheHiveAddProcedures(List<Procedure> theHiveNewProcedures)
+        {
+            foreach (Procedure procedure in theHiveNewProcedures)
+            {
+                _theHiveManager.AddProcedureToCase(procedure).GetAwaiter().GetResult();
+            }
+
+        }
+
         [SupportedOSPlatform("windows")]
         public static async Task CheckRegistryIndicators(List<RegistryIndicator> lRegistryIndicator)
         {
             List<RegistryKeyResult> registryKeyResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new ();
 
-            foreach (RegistryIndicator registryIoC in lRegistryIndicator)
+            if (lRegistryIndicator != null)
             {
-                foreach (RegistryKeyResult registryKeyResult in await CheckRegistryKey(registryIoC))
+
+                foreach (RegistryIndicator registryIoC in lRegistryIndicator)
                 {
-                    if (registryKeyResult is not null)
+                    foreach (RegistryKeyResult registryKeyResult in await CheckRegistryKey(registryIoC))
                     {
-                        registryKeyResults.Add(registryKeyResult);
+                        if (registryKeyResult is not null)
+                        {
+                            registryKeyResults.Add(registryKeyResult);
+
+                            // Sends the result to TheHive
+                            if (null != _theHiveManager && null != registryIoC.Observable && registryKeyResult.Result)
+                            {
+                                registryIoC.Observable.DataType = "registry";
+                                registryIoC.Observable.Data.Add(JsonSerializer.Serialize(registryKeyResult.RegistryItem));
+                                LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(registryIoC.Observable));
+                            }
+                            
+                        }
                     }
+
                 }
 
+                OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
-
-            OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
-
         }
 
 
@@ -104,37 +143,64 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckPipeIndicators(List<PipeIndicator> lPipeIndicators)
         {
             List<PipeResult> lPipeResults = new();
-
-
-
-            foreach (PipeIndicator pipeIoC in lPipeIndicators)
+            List<Task> LIST_TheHiveSendDataTasks = new();
+                
+            if (lPipeIndicators != null)
             {
-
-                foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
+                foreach (PipeIndicator pipeIoC in lPipeIndicators)
                 {
-                    lPipeResults.Add(pipeResult);
+
+                    foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
+                    {
+                        lPipeResults.Add(pipeResult);               
+                    }
+
+                    // Sends the result to TheHive
+                    if (null != _theHiveManager && null != pipeIoC.Observable)
+                    {
+                        pipeIoC.Observable.DataType = "pipe";
+                        pipeIoC.Observable.Data.AddRange(lPipeResults.Where(element=> element.Result).Select(element=>element.Name));
+
+                        LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(pipeIoC.Observable));
+                    }
+
                 }
 
+                OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
-            OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+
         }
 
         [SupportedOSPlatform("windows")]
         public static async Task CheckProcessIndicators(List<ProcessIndicator> lProcessIndicators)
         {
             List<ProcessResult> lProcessResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new();
 
-            foreach (ProcessIndicator processIoC in lProcessIndicators)
+            if (lProcessIndicators != null)
             {
-
-                foreach (ProcessResult processResult in await CheckProcess(processIoC))
+                foreach (ProcessIndicator processIoC in lProcessIndicators)
                 {
-                    lProcessResults.Add(processResult);
+
+                    foreach (ProcessResult processResult in await CheckProcess(processIoC))
+                    {
+                        lProcessResults.Add(processResult);
+
+                        // Sends the result to TheHive
+                        if (null != _theHiveManager && null != processIoC.Observable && processResult.Result)
+                        {
+                            processIoC.Observable.DataType = "process";
+                            processIoC.Observable.Data.Add(processIoC.Name);
+                            LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(processIoC.Observable));
+                        }
+                    }
+
                 }
 
+                OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
-
-            OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
         }
 
 
@@ -142,19 +208,35 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckFileIndicators(List<FileIndicator> lFileIndicator)
         {
             List<FileResult> lfileResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new();
 
-            foreach (FileIndicator fileIoC in lFileIndicator)
+
+            if (lFileIndicator != null)
             {
-                foreach (FileResult fileResult in await CheckFile(fileIoC))
+                foreach (FileIndicator fileIoC in lFileIndicator)
                 {
-                    if (null != fileResult)
+                    foreach (FileResult fileResult in await CheckFile(fileIoC))
                     {
-                        lfileResults.Add(fileResult);
+                        if (null != fileResult)
+                        {
+                            lfileResults.Add(fileResult);
+
+                        }
+                    }
+
+                    // Sends the result to TheHive
+                    if (null != _theHiveManager && null != fileIoC.Observable)
+                    {
+                        fileIoC.Observable.DataType = "filename";
+                        fileIoC.Observable.Data.AddRange(lfileResults.Where(element => element.Result).Select(element => element.FileItem.STRING_Path));
+                        LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(fileIoC.Observable));
                     }
                 }
-            }
 
-            OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+                OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+                
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
+            }
         }
 
 

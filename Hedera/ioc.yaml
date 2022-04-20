@@ -10,6 +10,20 @@ information:
     riga 1
     riga 2
     riga 3
+the_hive:
+  case:
+    title: "[{{machine_name}}] - Test Title"
+    description: Test Description
+    pap: 1
+    tlp: 1
+    severity: 1
+    tags:
+      - tag1
+      - tag2
+  procedures:
+    - tactic: reconnaissance
+      pattern_id: T1589
+      description: this field supports the markdown syntax
 indicators:
   registry:
     - type: exists
@@ -18,6 +32,14 @@ indicators:
       key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows'
       value_name_regex: ^IsMRUEstablishedd?$
       is_recursive: false
+      observable:
+        tlp: 2
+        ioc: true
+        sighted: false
+        tags:
+          - tag1
+          - tag2
+        message: this field supports the markdown syntax
     - type: data_value_regex
       guid: 904de9b0-a4d7-4e39-8fd2-754324a4d29b
       base_key: HKEY_USERS
@@ -42,6 +64,14 @@ indicators:
       path: C:\Users\{{user}}
       filename: ^file\.exe$
       is_recursive: true
+      observable:
+        tlp: 2
+        ioc: true
+        sighted: false
+        tags:
+          - tag1
+          - tag2
+        message: this field supports the markdown syntax
     - type: exists
       guid: af8fe480-d92a-4cd4-a488-5ad1913b514a
       path: C:\Users\antonio.blescia\subfolder11
@@ -84,6 +114,14 @@ indicators:
     - type: exists
       guid: 1a438dba-bb7f-45d3-a8d2-fd56ab3e9126
       name: ^\\\\\.\\\\pipe\\\\[a-fA-F0-9]{32}$
+      observable:
+        tlp: 2
+        ioc: true
+        sighted: false
+        tags:
+            - tag1
+            - tag2
+        message: this field supports the markdown syntax
   process:
     - type: exists
       guid: 21174833-527a-46a9-afdd-eab618180e63

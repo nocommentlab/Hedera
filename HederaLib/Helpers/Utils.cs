@@ -107,6 +107,10 @@ namespace ncl.hedera.HederaLib.Helpers
                 STRING_TextWithTemplate = STRING_TextWithTemplate.Replace("{{user}}", WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
             }
 
+            if(STRING_TextWithTemplate.Contains("{{machine_name}}"))
+            {
+                STRING_TextWithTemplate = STRING_TextWithTemplate.Replace("{{machine_name}}", Environment.MachineName);
+            }
             return STRING_TextWithTemplate;
         }
 
@@ -118,7 +122,7 @@ namespace ncl.hedera.HederaLib.Helpers
         [SupportedOSPlatform("windows")]
         public static List<RegistryItem> ReadRegistryDataValue(RegistryIndicator registryIoc)
         {
-            RegistryItem registryItem = null;
+            RegistryItem registryItem;
             List<RegistryItem> lRegistryItem = null;
 
             RegistryKey REGISTRY_RegistryKey;
