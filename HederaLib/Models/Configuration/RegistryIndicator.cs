@@ -5,8 +5,8 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     {
         public string BaseKey { get; init; }
         public string Key { get; set; }
-        public string ValueNameRegex { get; init; }
-        public string ValueDataRegex { get; init; }
+        public string ValueName { get; init; }
+        public string ValueData { get; init; }
         public bool IsRecursive { get; init; }
         
 
