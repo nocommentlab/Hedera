@@ -9,7 +9,7 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     public sealed class ProcessIndicator : CommonIndicatorBase
     {
         public string Name { get; init; }
-        public string Sha256Hash { get; set; }
+        public string Value { get; set; }
 
         public string Rule { get; set; }
     }

@@ -270,9 +270,8 @@ namespace ncl.hedera.HederaLib
                     {
                         Result = registryIoc.Type switch
                         {
-                            "exists" => (registryItem != null),
-                            "data_value_regex" => ((null != registryItem) &&
-                                                    Regex.IsMatch(registryItem.OBJECT_ValueData.ToString(), registryIoc.ValueDataRegex, RegexOptions.IgnoreCase)),
+                            "exists" => ((null != registryItem) &&
+                                                    Regex.IsMatch(registryItem.OBJECT_ValueData.ToString(), registryIoc.ValueData, RegexOptions.IgnoreCase)),
                             _ => false
                         },
 
@@ -328,7 +327,7 @@ namespace ncl.hedera.HederaLib
                     BOOL_TempResult = fileIoc.Type switch
                     {
                         "exists" => true,
-                        "hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(fileIoc.Sha256Hash.ToLower()),
+                        "sha256hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
                         "imphash" => Utils.CalculateImphash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
                         "yara" => YaraScanner.VerifyBinTxtYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule).Count > 0,
                         _ => false
@@ -421,8 +420,8 @@ namespace ncl.hedera.HederaLib
                     BOOL_CheckResult = processIoC.Type switch
                     {
                         "exists" => process.MainModule.ModuleName.Equals(processIoC.Name),
-                        "hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoC.Sha256Hash, true) == 0,
-                        "memory" => YaraScanner.VerifyProcessYaraRule(process, processIoC.Rule).Count > 0,
+                        "sha256hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoC.Value, true) == 0,
+                        "yara" => YaraScanner.VerifyProcessYaraRule(process, processIoC.Rule).Count > 0,
                         _ => false,
                     };
 

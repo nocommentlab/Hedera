@@ -137,14 +137,14 @@ namespace ncl.hedera.HederaLib.Helpers
                 {
                     if (registryIoc.IsRecursive)
                     {
-                        SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueNameRegex, ref lRegistryItem);
+                        SearchSubKeys(REGISTRY_RegistryKey, registryIoc.ValueName, ref lRegistryItem);
                         
                     }
                     else
                     {
 
                         List<string> lSTRING_ValueNames = REGISTRY_RegistryKey.GetValueNames()
-                                                          .Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueNameRegex))
+                                                          .Where(valueName => Regex.IsMatch(valueName, registryIoc.ValueName))
                                                           .ToList();
 
                         if (lSTRING_ValueNames.Count > 0)
@@ -267,7 +267,7 @@ namespace ncl.hedera.HederaLib.Helpers
 
             if (vSTRING_Subkeys.Length > 0 )
             {
-                lRegistryItem = new();
+                lRegistryItem ??= new();
 
                 while (INT32_Idx < vSTRING_Subkeys.Length)
                 {
