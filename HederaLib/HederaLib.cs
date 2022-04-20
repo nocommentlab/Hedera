@@ -85,25 +85,29 @@ namespace ncl.hedera.HederaLib
         }
 
 
-        public static async Task TheHiveCreateCase(Case theHiveNewCase)
+        public static void TheHiveCreateCase(Case theHiveNewCase)
         {
             // Replace the machine_name template
             theHiveNewCase.Title = Utils.ReplaceTemplate(theHiveNewCase.Title);
-            await _theHiveManager.CreateCase(theHiveNewCase);
+            theHiveNewCase.StartDate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            theHiveNewCase.Status = "Open";
+            _theHiveManager.CreateCase(theHiveNewCase).GetAwaiter().GetResult();
         }
 
-        public static async Task TheHiveAddProcedures(List<Procedure> theHiveNewProcedures)
+        public static void TheHiveAddProcedures(List<Procedure> theHiveNewProcedures)
         {
             foreach (Procedure procedure in theHiveNewProcedures)
             {
-                await _theHiveManager.AddProcedureToCase(procedure);
+                _theHiveManager.AddProcedureToCase(procedure).GetAwaiter().GetResult();
             }
 
         }
+
         [SupportedOSPlatform("windows")]
         public static async Task CheckRegistryIndicators(List<RegistryIndicator> lRegistryIndicator)
         {
             List<RegistryKeyResult> registryKeyResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new ();
 
             if (lRegistryIndicator != null)
             {
@@ -121,7 +125,7 @@ namespace ncl.hedera.HederaLib
                             {
                                 registryIoC.Observable.DataType = "registry";
                                 registryIoC.Observable.Data.Add(JsonSerializer.Serialize(registryKeyResult.RegistryItem));
-                                await _theHiveManager.AddObservableToCase(registryIoC.Observable);
+                                LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(registryIoC.Observable));
                             }
                             
                         }
@@ -130,6 +134,7 @@ namespace ncl.hedera.HederaLib
                 }
 
                 OutputManager.WriteEvidenciesResult<RegistryKeyResult>(registryKeyResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__REGISTRY_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
         }
 
@@ -138,7 +143,8 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckPipeIndicators(List<PipeIndicator> lPipeIndicators)
         {
             List<PipeResult> lPipeResults = new();
-
+            List<Task> LIST_TheHiveSendDataTasks = new();
+                
             if (lPipeIndicators != null)
             {
                 foreach (PipeIndicator pipeIoC in lPipeIndicators)
@@ -146,19 +152,22 @@ namespace ncl.hedera.HederaLib
 
                     foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
                     {
-                        lPipeResults.Add(pipeResult);
+                        lPipeResults.Add(pipeResult);               
+                    }
 
-                        // Sends the result to TheHive
-                        if (null != _theHiveManager && null != pipeIoC.Observable && pipeResult.Result)
-                        {
-                            pipeIoC.Observable.DataType = "pipe";
-                            pipeIoC.Observable.Data.Add(pipeIoC.Name);
-                            await _theHiveManager.AddObservableToCase(pipeIoC.Observable);
-                        }
+                    // Sends the result to TheHive
+                    if (null != _theHiveManager && null != pipeIoC.Observable)
+                    {
+                        pipeIoC.Observable.DataType = "pipe";
+                        pipeIoC.Observable.Data.AddRange(lPipeResults.Where(element=> element.Result).Select(element=>element.Name));
+
+                        LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(pipeIoC.Observable));
                     }
 
                 }
+
                 OutputManager.WriteEvidenciesResult<PipeResult>(lPipeResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PIPE_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
 
         }
@@ -167,6 +176,7 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckProcessIndicators(List<ProcessIndicator> lProcessIndicators)
         {
             List<ProcessResult> lProcessResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new();
 
             if (lProcessIndicators != null)
             {
@@ -182,13 +192,14 @@ namespace ncl.hedera.HederaLib
                         {
                             processIoC.Observable.DataType = "process";
                             processIoC.Observable.Data.Add(processIoC.Name);
-                            await _theHiveManager.AddObservableToCase(processIoC.Observable);
+                            LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(processIoC.Observable));
                         }
                     }
 
                 }
 
                 OutputManager.WriteEvidenciesResult<ProcessResult>(lProcessResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__PROCESS_OUTPUT__);
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
         }
 
@@ -197,8 +208,8 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckFileIndicators(List<FileIndicator> lFileIndicator)
         {
             List<FileResult> lfileResults = new();
+            List<Task> LIST_TheHiveSendDataTasks = new();
 
-            
 
             if (lFileIndicator != null)
             {
@@ -210,18 +221,21 @@ namespace ncl.hedera.HederaLib
                         {
                             lfileResults.Add(fileResult);
 
-                            // Sends the result to TheHive
-                            if (null != _theHiveManager && null != fileIoC.Observable && fileResult.Result)
-                            {
-                                fileIoC.Observable.DataType = "file";
-                                fileIoC.Observable.Data.Add(fileIoC.Filename);
-                                await _theHiveManager.AddObservableToCase(fileIoC.Observable);
-                            }
                         }
+                    }
+
+                    // Sends the result to TheHive
+                    if (null != _theHiveManager && null != fileIoC.Observable)
+                    {
+                        fileIoC.Observable.DataType = "filename";
+                        fileIoC.Observable.Data.AddRange(lfileResults.Where(element => element.Result).Select(element => element.FileItem.STRING_Path));
+                        LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(fileIoC.Observable));
                     }
                 }
 
                 OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
+                
+                Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
         }
 

@@ -96,7 +96,8 @@ namespace ncl.hedera.HederaLib.Controllers
             JsonObject deserializedResponse = JsonNode.Parse(response.Content).AsObject();
 
             _STRING_CaseId = deserializedResponse["_id"].ToString();
-            //return deserializedResponse["_id"].ToString();
+
+
         }
 
         public async Task<string> AddObservableToCase(Observable OBSERVABLE_ToAdd)

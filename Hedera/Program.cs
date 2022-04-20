@@ -110,8 +110,8 @@ namespace Hedera
             if (opts.Ip != null && opts.ApiKey != null)
             {
                 HederaLib.TheHiveManager = new TheHiveManager(opts.Ip, opts.Port, opts.ApiKey);
-                await HederaLib.TheHiveCreateCase(deserializedYaml.TheHive.Case);
-                await HederaLib.TheHiveAddProcedures(deserializedYaml.TheHive.Procedures);
+                HederaLib.TheHiveCreateCase(deserializedYaml.TheHive.Case);
+                HederaLib.TheHiveAddProcedures(deserializedYaml.TheHive.Procedures);
             }
 
             // Checks if the file has the correct structure and print its summary

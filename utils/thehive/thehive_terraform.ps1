@@ -309,7 +309,7 @@ function Add-MitreAttackPatterns {
 }
 
 
-$theHiveRemoteIpServer = "192.168.1.70"
+$theHiveRemoteIpServer = "127.0.0.1"
 
 Write-Host "[I] - Retrieving default admin credential....."
 
