@@ -26,7 +26,7 @@ the_hive:
       description: this field supports the markdown syntax
 indicators:
   registry:
-    - type: exists
+    - type: value_exists
       guid: 904de9b0-a4d7-4e39-8fd2-754324a4d29b
       base_key: HKEY_USERS
       key: '{{sid}}\Software\Microsoft\Windows NT\CurrentVersion\Windows'
@@ -36,25 +36,25 @@ indicators:
   file:
     - type: exists
       guid: 42d17885-ce39-4b8b-a542-ac4751eaabc5
-      path: C:\folder1\folder2
-      filename: file1.txt
+      path: C:\folder1
+      name: filea.txt
       is_recursive: true
     - type: sha256hash
       guid: 07114ca5-d93c-47e3-abae-954fa23842a6
-      path: C:\folder1\folder2
-      filename: ^file\.txt$
+      path: C:\Windows\System32
+      name: ^cmd\.exe$
       value: BC52D6BFE3AC965E069109DBD7D15E0CCAAA55678F6E2A6664BEE2EDF8AE1B2B
       is_recursive: true
     - type: imphash
       guid: 53c88a83-33b8-49e5-b309-71cea51b8357
-      path: C:\Program Files
-      filename: .*
+      path: C:\Windows\System32
+      name: ^cmd\.exe$
       value: C483AB042998E5D3F9AC1D5A7C7ABDB2
       is_recursive: true
     - type: yara
       guid: c8dc388e-642c-4911-a7d7-c33fe7750baa
       path: C:\folder1
-      filename: file.txt
+      name: file.txt
       rule: C:\folder1\rule.yara
       is_recursive: true
   pipe:
@@ -73,15 +73,3 @@ indicators:
       guid: f099098d-3831-4bdf-9304-9e14194cd0a1
       name: ^notepad.exe$
       rule: C:\test\file.yara
-  #event:
-  #  - type: exists
-  #    guid: 4957ef98-aa1d-4b65-953e-0ecb5662d58a
-  #    channel: security
-  #    id: 4672
-  #  - type: exists
-  #    guid: 20b43436-ef85-44a8-8566-dca85a3b3855
-  #    channel: application
-  #    id: 1001
-  #    datetime_start: 15/12/2020 00:00:00
-  #    datetime_end: 15/12/2020 23:59:00
-  #    datetime_format: dd/MM/yyyy HH:mm:ss
