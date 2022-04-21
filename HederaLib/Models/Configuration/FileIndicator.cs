@@ -9,7 +9,7 @@ namespace ncl.hedera.HederaLib.Models.Configuration
     public sealed class FileIndicator : CommonIndicatorBase
     {
         public string Path { get; set; }
-        public string Filename { get; init; }
+        public string Name { get; init; }
         public bool IsRecursive { get; init; }
         public string Value { get; init; }
         public string Rule { get; init; }

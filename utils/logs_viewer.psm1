@@ -71,10 +71,9 @@ function Get-HederaLogUI
                     @{ Name = 'Result'; Expression = { $_.Result } }, 
                     @{ Name = 'GUID'; Expression = { $_.FileIndicator.Guid } }, 
                     @{ Name = 'Type'; Expression = { $_.FileIndicator.Type } },
-                    @{ Name = 'Sha256'; Expression = { $_.FileIndicator.Sha256Hash } },
-                    @{ Name = 'IMPHASH'; Expression = { $_.FileIndicator.Value } },
+                    @{ Name = 'Hash'; Expression = { $_.FileIndicator.Value } },
                     @{ Name = 'Path'; Expression = { $_.FileIndicator.Path } },
-                    @{ Name = 'FileName'; Expression = { $_.FileIndicator.Filename } },
+                    @{ Name = 'FileName'; Expression = { $_.FileIndicator.Name } },
                     @{ Name = 'Yara Rule'; Expression = { $_.FileIndicator.Rule } },
                     @{ Name = 'Detected Path'; Expression = { $_.FileItem.STRING_Path } }
                    
@@ -96,8 +95,8 @@ function Get-HederaLogUI
                     @{ Name = 'Type'; Expression = { $_.ProcessIndicator.Type } },
                     @{ Name = 'Name'; Expression = { $_.ProcessIndicator.Name } }, 
                     @{ Name = 'Sha256'; Expression = { $_.ProcessIndicator.Sha256Hash } },
-
                     @{ Name = 'ProcessName'; Expression = { $_.Name } }
+                    @{ Name = 'Pid'; Expression = { $_.Pid } }
                 )
         }
     }

@@ -107,7 +107,7 @@ namespace ncl.hedera.HederaLib
         public static async Task CheckRegistryIndicators(List<RegistryIndicator> lRegistryIndicator)
         {
             List<RegistryKeyResult> registryKeyResults = new();
-            List<Task> LIST_TheHiveSendDataTasks = new ();
+            List<Task> LIST_TheHiveSendDataTasks = new();
 
             if (lRegistryIndicator != null)
             {
@@ -127,7 +127,7 @@ namespace ncl.hedera.HederaLib
                                 registryIoC.Observable.Data.Add(JsonSerializer.Serialize(registryKeyResult.RegistryItem));
                                 LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(registryIoC.Observable));
                             }
-                            
+
                         }
                     }
 
@@ -144,7 +144,7 @@ namespace ncl.hedera.HederaLib
         {
             List<PipeResult> lPipeResults = new();
             List<Task> LIST_TheHiveSendDataTasks = new();
-                
+
             if (lPipeIndicators != null)
             {
                 foreach (PipeIndicator pipeIoC in lPipeIndicators)
@@ -152,14 +152,14 @@ namespace ncl.hedera.HederaLib
 
                     foreach (PipeResult pipeResult in await CheckPipe(pipeIoC))
                     {
-                        lPipeResults.Add(pipeResult);               
+                        lPipeResults.Add(pipeResult);
                     }
 
                     // Sends the result to TheHive
                     if (null != _theHiveManager && null != pipeIoC.Observable)
                     {
                         pipeIoC.Observable.DataType = "pipe";
-                        pipeIoC.Observable.Data.AddRange(lPipeResults.Where(element=> element.Result).Select(element=>element.Name));
+                        pipeIoC.Observable.Data.AddRange(lPipeResults.Where(element => element.Result).Select(element => element.Name));
 
                         LIST_TheHiveSendDataTasks.Add(_theHiveManager.AddObservableToCase(pipeIoC.Observable));
                     }
@@ -234,7 +234,7 @@ namespace ncl.hedera.HederaLib
                 }
 
                 OutputManager.WriteEvidenciesResult<FileResult>(lfileResults, OutputManager.OUTPUT_MODE.TO_FILE, OutputManager.__FILE_OUTPUT__);
-                
+
                 Task.WaitAll(LIST_TheHiveSendDataTasks.ToArray());
             }
         }
@@ -270,7 +270,7 @@ namespace ncl.hedera.HederaLib
                     {
                         Result = registryIoc.Type switch
                         {
-                            "exists" => ((null != registryItem) &&
+                            "value_exists" => ((null != registryItem) &&
                                                     Regex.IsMatch(registryItem.OBJECT_ValueData.ToString(), registryIoc.ValueData, RegexOptions.IgnoreCase)),
                             _ => false
                         },
@@ -329,7 +329,7 @@ namespace ncl.hedera.HederaLib
                         "exists" => true,
                         "sha256hash" => Utils.CalculateSha256Hash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
                         "imphash" => Utils.CalculateImphash(fileItem.STRING_Path).Equals(fileIoc.Value.ToLower()),
-                        "yara" => YaraScanner.VerifyBinTxtYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule).Count > 0,
+                        "yara" => YaraScanner.VerifyBinTxtYaraRule(STRING_FilePath: fileItem.STRING_Path, STRING_YaraRule: fileIoc.Rule)?.Count > 0,
                         _ => false
                     };
 
@@ -368,26 +368,26 @@ namespace ncl.hedera.HederaLib
             List<string> lNamedPipe;
 
 
-            lNamedPipe = Utils.GetSystemNamedPipes();
+            lNamedPipe = Utils.IsPipeExists(pipeIoC);
 
-            if (null != lNamedPipe)
+            if (lNamedPipe.Count > 0)
             {
-                foreach (string namedPipe in lNamedPipe)
+
+                foreach (string STRING_PipeName in lNamedPipe)
                 {
                     BOOL_TempResult = pipeIoC.Type switch
                     {
-                        "exists" => Regex.IsMatch(namedPipe, pipeIoC.Name),
+                        "exists" => true,
                         _ => false
                     };
 
                     lPipeResult.Add(new PipeResult
                     {
                         Result = BOOL_TempResult,
-                        Name = namedPipe,
+                        Name = STRING_PipeName,
                         PipeIndicator = pipeIoC
 
                     });
-
                 }
             }
             else
@@ -419,7 +419,7 @@ namespace ncl.hedera.HederaLib
 
                     BOOL_CheckResult = processIoC.Type switch
                     {
-                        "exists" => process.MainModule.ModuleName.Equals(processIoC.Name),
+                        "exists" => Regex.IsMatch(process.MainModule.ModuleName, processIoC.Name),
                         "sha256hash" => string.Compare(Utils.CalculateSha256Hash(process.MainModule.FileName), processIoC.Value, true) == 0,
                         "yara" => YaraScanner.VerifyProcessYaraRule(process, processIoC.Rule).Count > 0,
                         _ => false,
@@ -429,6 +429,7 @@ namespace ncl.hedera.HederaLib
                     {
                         Result = BOOL_CheckResult,
                         Name = process.ProcessName,
+                        Pid = process.Id,
                         ProcessIndicator = processIoC
 
                     });

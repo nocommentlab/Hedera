@@ -122,7 +122,7 @@ namespace ncl.hedera.HederaLib.Helpers
         [SupportedOSPlatform("windows")]
         public static List<RegistryItem> ReadRegistryDataValue(RegistryIndicator registryIoc)
         {
-            RegistryItem registryItem;
+            
             List<RegistryItem> lRegistryItem = null;
 
             RegistryKey REGISTRY_RegistryKey;
@@ -192,6 +192,14 @@ namespace ncl.hedera.HederaLib.Helpers
             return REGISTRYKEY_SelectedKey;
         }
 
+
+        [SupportedOSPlatform("windows")]
+        public static List<string> IsPipeExists(PipeIndicator pipeIoC)
+        {
+            return GetSystemNamedPipes().Where(pipe => Regex.IsMatch(pipe, pipeIoC.Name)).ToList();
+
+             
+        }
         /// <summary>
         /// Checks if a file exists. It supports recursive mode.
         /// </summary>
@@ -210,7 +218,7 @@ namespace ncl.hedera.HederaLib.Helpers
             if (fileIoc.IsRecursive)
             {
                 GetAllAccessibileFiles(fileIoc.Path, LIST_AccessibleFiles);
-                lSTRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), fileIoc.Filename, RegexOptions.IgnoreCase)).ToList();
+                lSTRING_Filename = LIST_AccessibleFiles.Where(accessibleFile => Regex.IsMatch(Path.GetFileName(accessibleFile), fileIoc.Name, RegexOptions.IgnoreCase)).ToList();
 
                 /* Free the memory */
                 LIST_AccessibleFiles.Clear();

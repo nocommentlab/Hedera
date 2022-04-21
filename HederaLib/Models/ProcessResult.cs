@@ -10,8 +10,10 @@ namespace ncl.hedera.HederaLib.Models
 {
     public class ProcessResult : CheckResult
     {
-        //public FileItem FileItem { get; set; }
+        
         public string Name { get; set; }
+        public int Pid { get; set; }
+
         public ProcessIndicator ProcessIndicator { get; set; }
 
         public ProcessResult()

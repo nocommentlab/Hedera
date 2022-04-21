@@ -43,17 +43,20 @@ namespace ncl.hedera.HederaLib.Helpers
         {
             List<YaraResult> yaraResults = new();
 
+            try
+            {
+                List<ScanResult> results = QuickScan.Process(process.Id, STRING_YaraRule);
 
-            List<ScanResult> results = QuickScan.Process(process.Id, STRING_YaraRule);
-
-            if (results.Any())
-            { 
-
-                yaraResults.Add(new YaraResult
+                if (results.Any())
                 {
-                    RuleIdentifier = results[0].MatchingRule.Identifier,
-                });
+
+                    yaraResults.Add(new YaraResult
+                    {
+                        RuleIdentifier = results[0].MatchingRule.Identifier,
+                    });
+                }
             }
+            catch (Exception) { }
 
 
 
