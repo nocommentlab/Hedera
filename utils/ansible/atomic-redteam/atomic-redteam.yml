@@ -1,7 +1,6 @@
 ---
 - name: Configure machine with AtomicRedTeam
   hosts: windows
-  remote_user: Admin
 
   # Manual Tasks
   # - Restore the vm
