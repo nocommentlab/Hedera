@@ -3,6 +3,9 @@
   hosts: windows
 
   tasks:
+  - name: Install Sysmon
+    import_role:
+      name: ansible-sysmon
   - name: Disable Windows Defender For Endpoint - Create Key
     ansible.windows.win_regedit:
       path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection
