@@ -1,4 +1,22 @@
 <#
+.SYNOPSIS
+
+Generates the MitreAttack Navigator Layer json file.
+
+.DESCRIPTION
+
+This script generates a JSON output based on the TheHive procedures daclared inside the IDBF file.
+Use this portal to view the generated layer: https://mitre-attack.github.io/attack-navigator/ and go to "Open Existing Layer"
+
+.PARAMETER Idbf
+
+Specifies the IDBF file path that contains the TheHive procedures
+
+.EXAMPLE
+
+PS> Import-Module .\idbf2mitre.psm1
+PS> Get-MitreNavigatorLayer -Idbf .\ioc.yaml
+
 
 #>
 
