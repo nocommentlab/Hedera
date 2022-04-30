@@ -1,0 +1,28 @@
+---
+- name: Create directory
+  win_file:
+    path: "{{hedera_install_location}}"
+    state: directory
+  register: result
+
+#- name: Get dotnet install package
+#  win_get_url:
+#  url: "{{dotnet_core_install_executable_url}}"
+#  dest: "{{hedera_install_location}}/{{dotnet_core_executable_script_file}}"
+
+- name: Install the dotnet runtime package
+  ansible.windows.win_package:
+    path: "https://download.visualstudio.microsoft.com/download/pr/2e97f1f0-f321-4baf-8d02-0be5f08afc4e/2a011c8f9b2792e17d363a21c0ed8fdc/dotnet-runtime-6.0.4-win-x64.exe"
+    product_id: '{ceda1852-a84a-42fc-beaf-5ea08647fd64}'
+    arguments: /install /passive /norestart
+
+- name: Get hedera zip
+  win_get_url:
+    url: "{{ hedera_zip_url }}"
+    dest: "{{hedera_install_location}}/{{hedera_zip_file}}"
+
+- name: Unzip hedera
+  win_unzip:
+    src: "{{hedera_install_location}}/{{hedera_zip_file}}"
+    dest: "{{hedera_install_location}}"
+    delete_archive: yes
