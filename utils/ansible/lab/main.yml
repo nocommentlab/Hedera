@@ -7,9 +7,25 @@
     import_role:
       name: ansible-sysmon
 
+  - name: Install Sigma
+    import_role:
+      name: ansible-sigma
+
   - name: Install Hedera
     import_role:
       name: ansible-hedera
+  
+  # Install python runtime and libraries
+
+  - name: Install the python runtime package
+    ansible.windows.win_package:
+      path: "https://www.python.org/ftp/python/3.10.4/python-3.10.4-amd64.exe"
+      product_id: '{ceda1852-a84a-42fc-beaf-5ea08647fe56}'
+      arguments: /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 Include_pipe=1
+  
+  - name: Install pyyaml and requests with pip
+    ansible.windows.win_shell: pip install pyyaml requests
+  
   
   - name: Disable Windows Defender For Endpoint - Create Key
     ansible.windows.win_regedit:
