@@ -1,0 +1,14 @@
+---
+
+- name: Get sigma zip
+  win_get_url:
+    url: "{{sigma_zip_base_url}}/{{sigma_zip_version}}//{{zip_extension}}"
+    dest: "{{sigma_install_location}}/{{sigma_zip_file}}"
+
+- name: Unzip sigma
+  win_unzip:
+    src: "{{sigma_install_location}}/{{sigma_zip_file}}"
+    dest: "{{sigma_install_location}}"
+    delete_archive: yes
+  register: result
+

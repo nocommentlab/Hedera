@@ -1,0 +1,6 @@
+---
+sigma_install_location: "c:\\"
+sigma_zip_version: "0.21"
+zip_extension: ".zip"
+sigma_zip_base_url: "https://github.com/SigmaHQ/sigma/archive/refs/tags"
+sigma_zip_file: "sigma.zip"

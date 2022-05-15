@@ -1,28 +1,47 @@
 ---
-- name: Configure machine with AtomicRedTeam
+- name: Configure Lab VM with Sysmon, Sigma, Hedera, and AtomicRedTeam. Finally, disable Defender for Endpoint
   hosts: windows
 
   tasks:
+
+  - name: Install Runtimes
+    import_role:
+      name: ansible-runtimes
+
   - name: Install Sysmon
     import_role:
       name: ansible-sysmon
+
+  - name: Install Sigma
+    import_role:
+      name: ansible-sigma
+
+  - name: Install Hedera
+    import_role:
+      name: ansible-hedera
+  
   - name: Disable Windows Defender For Endpoint - Create Key
     ansible.windows.win_regedit:
       path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection
+  
   - name: Disable Windows Defender For Endpoint - Add Value
     ansible.windows.win_regedit:
       path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection
       name: DisableRealtimeMonitoring
       data: 1
       type: dword
+  
   - name: Disable Windows Defender for Endpoint using the GUI
     pause:
+  
   - name: Ensure that WinRM is started when the system has settled
     win_service:
       name: WinRM
       start_mode: auto
+  
   - name: Reboot the machine
     ansible.windows.win_reboot:
+  
   - name: Install Invoke-AtomicRedTeam with Atomics
     ansible.windows.win_powershell:
       script: |

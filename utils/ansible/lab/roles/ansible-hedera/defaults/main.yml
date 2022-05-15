@@ -1,0 +1,6 @@
+---
+dotnet_core_install_executable_url: "https://download.visualstudio.microsoft.com/download/pr/2e97f1f0-f321-4baf-8d02-0be5f08afc4e/2a011c8f9b2792e17d363a21c0ed8fdc/dotnet-runtime-6.0.4-win-x64.exe"
+dotnet_core_install_executable_file: "dotnet-install-runtime.exe"
+hedera_install_location: "c:\\hedera"
+hedera_zip_url: "https://github.com/nocommentlab/Hedera/releases/download/v.1.1.0.-pd/Hedera_1_1_0_PD.zip"
+hedera_zip_file: "hedera.zip"

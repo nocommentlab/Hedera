@@ -1,0 +1,17 @@
+---
+- name: Create directory
+  win_file:
+    path: "{{hedera_install_location}}"
+    state: directory
+  register: result
+
+- name: Get hedera zip
+  win_get_url:
+    url: "{{ hedera_zip_url }}"
+    dest: "{{hedera_install_location}}/{{hedera_zip_file}}"
+
+- name: Unzip hedera
+  win_unzip:
+    src: "{{hedera_install_location}}/{{hedera_zip_file}}"
+    dest: "{{hedera_install_location}}"
+    delete_archive: yes
