@@ -1,8 +1,4 @@
 ---
-# defaults file for ansible-sigma
-# https://www.python.org/ftp/python/3.10.4/python-3.10.4-amd64.exe
-# .\python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 Include_pipe=1
-# pip3 install pyyaml requests
 
 - name: Get sigma zip
   win_get_url:

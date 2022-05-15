@@ -1,6 +1,6 @@
 galaxy_info:
   author: Antonio Blescia
-  description: Installs SigmaHQ
+  description: Installs Python and DotNet runtimes
   company: NoCommentlab
 
   # If the issue tracker for your role is not on github, uncomment the

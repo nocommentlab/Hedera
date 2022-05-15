@@ -1,0 +1,6 @@
+---
+
+python_package_url: "https://www.python.org/ftp/python/3.10.4/python-3.10.4-amd64.exe"
+python_dependencies: "pyyaml requests"
+dotnet_package_url: "https://download.visualstudio.microsoft.com/download/pr/2e97f1f0-f321-4baf-8d02-0be5f08afc4e/2a011c8f9b2792e17d363a21c0ed8fdc/dotnet-runtime-6.0.4-win-x64.exe"
+
